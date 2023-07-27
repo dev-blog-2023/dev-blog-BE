@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.entity.EmailVerificationToken;
 import song.devlog1.entity.User;
-import song.devlog1.exception.alreadyexist.AlreadyExpiredEmailVerificationToken;
-import song.devlog1.exception.alreadyexist.AlreadyVerifiedEmailVerificationTokenException;
-import song.devlog1.exception.invalid.InvalidTokenException;
+import song.devlog1.exception.already.AlreadyExpiredTokenException;
+import song.devlog1.exception.already.AlreadyVerifiedTokenException;
 import song.devlog1.exception.notfound.EmailVerificationTokenNotFoundException;
 import song.devlog1.repository.EmailVerificationJpaRepository;
 import song.devlog1.repository.UserJpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,18 +46,18 @@ public class EmailVerificationService {
 
     @Transactional
     public Long verifyEmailVerificationToken(String email, String token) {
-        Optional<EmailVerificationToken> findToken = emailVerificationRepository.findByEmail(email);
+        Optional<EmailVerificationToken> findToken = emailVerificationRepository.findByEmailAndToken(email, token);
         if (findToken.isEmpty()) {
             throw new EmailVerificationTokenNotFoundException("토큰을 찾을 수 없습니다.");
         }
 
         EmailVerificationToken emailVerificationToken = findToken.get();
-        if (emailVerificationToken.isVerified()) {
-            throw new AlreadyExpiredEmailVerificationToken("이미 만료된 토큰입니다.");
+        if (emailVerificationToken.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AlreadyExpiredTokenException("이미 만료된 토큰입니다.");
         }
 
-        if (!token.equals(emailVerificationToken.getToken())) {
-            throw new InvalidTokenException("토큰값이 일치하지 않습니다");
+        if (emailVerificationToken.isVerified()) {
+            throw new AlreadyVerifiedTokenException("이미 인증된 이메일입니다.");
         }
 
         emailVerificationToken.setVerified(true);
@@ -65,10 +65,18 @@ public class EmailVerificationService {
         return saveToken.getId();
     }
 
+    @Transactional
+    public void deleteEmailVerificationToken(Long tokenId) {
+        Optional<EmailVerificationToken> findToken = emailVerificationRepository.findById(tokenId);
+        if (findToken.isPresent()) {
+            emailVerificationRepository.delete(findToken.get());
+        }
+    }
+
     private void isAlreadyVerified(String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
         if (findUser.isPresent()) {
-            throw new AlreadyVerifiedEmailVerificationTokenException("이미 인증된 이메일입니다.");
+            throw new AlreadyVerifiedTokenException("이미 인증된 이메일입니다.");
         }
     }
 

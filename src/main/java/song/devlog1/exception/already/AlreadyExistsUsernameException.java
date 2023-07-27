@@ -1,4 +1,4 @@
-package song.devlog1.exception.alreadyexist;
+package song.devlog1.exception.already;
 
 import song.devlog1.exception.AlreadyException;
 

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.dto.SignupDto;
 import song.devlog1.entity.User;
-import song.devlog1.exception.alreadyexist.AlreadyExistsUsernameException;
+import song.devlog1.exception.already.AlreadyExistsUsernameException;
 import song.devlog1.exception.invalid.InvalidRequestParameterException;
 import song.devlog1.exception.notfound.UserNotFoundException;
 import song.devlog1.repository.UserJpaRepository;
@@ -32,12 +32,10 @@ public class UserService {
     }
 
     @Transactional
-    public void findUser(Long userId) {
+    public User findUser(Long userId) {
         User findUser = getUserById(userId);
 
-
-
-        return;
+        return findUser;
     }
 
     @Transactional

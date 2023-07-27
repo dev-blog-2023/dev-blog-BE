@@ -14,4 +14,6 @@ public interface ResetPasswordTokenJpaRepository extends JpaRepository<ResetPass
     @Query("select t from ResetPasswordToken t where t.token = :token")
     Optional<ResetPasswordToken> findByToken(@Param(value = "token") String token);
 
+    @Query("select t from ResetPasswordToken t where t.username = :username")
+    Optional<ResetPasswordToken> findByUsername(@Param(value = "username") String username);
 }
