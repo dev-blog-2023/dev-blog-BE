@@ -26,4 +26,7 @@ public class User extends BaseTimeEntity{
 
     @OneToMany( mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserRole> roleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boardList = new ArrayList<>();
 }
