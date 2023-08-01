@@ -23,9 +23,10 @@ public class Board extends BaseTimeEntity{
 
     @Column(columnDefinition = "TEXT")
     private String content;
-    private String thumbnail;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<FileEntity> fileEntityList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Comment> commentList = new ArrayList<>();
 }

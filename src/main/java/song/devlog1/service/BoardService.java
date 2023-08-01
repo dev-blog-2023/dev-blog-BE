@@ -2,9 +2,12 @@ package song.devlog1.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.dto.BoardDto;
+import song.devlog1.dto.EditBoardDto;
 import song.devlog1.dto.SaveBoardDto;
 import song.devlog1.entity.Board;
 import song.devlog1.entity.User;
@@ -25,10 +28,10 @@ public class BoardService {
     private final UserJpaRepository userRepository;
 
     @Transactional
-    public Long saveBoard(SaveBoardDto saveBoardDto, Long userId, String thumbnailUrl) {
+    public Long saveBoard(SaveBoardDto saveBoardDto, Long userId) {
         User findUser = getUserById(userId);
 
-        Board board = saveBoardDto.toEntity(thumbnailUrl);
+        Board board = saveBoardDto.toEntity();
         board.setWriter(findUser);
 
         Board saveBoard = boardRepository.save(board);
@@ -43,6 +46,33 @@ public class BoardService {
         BoardDto boardDto = new BoardDto(findBoard);
 
         return boardDto;
+    }
+
+    @Transactional
+    public Page<Board> findAll(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAll(pageable);
+
+        return boardPage;
+    }
+
+    @Transactional
+    public Long editBoard(Long userId, Long boardId, EditBoardDto editBoardDto) {
+        Board findBoard = getBoardById(boardId);
+
+        if (!findBoard.getWriter().getId().equals(userId)) {
+            throw new InvalidAuthorizedException("권한이 없습니다.");
+        }
+
+        if (!findBoard.getTitle().equals(editBoardDto.getTitle())) {
+            findBoard.setTitle(editBoardDto.getTitle());
+        }
+        if (!findBoard.getContent().equals(editBoardDto.getContent())) {
+            findBoard.setContent(editBoardDto.getContent());
+        }
+
+        Board saveBoard = boardRepository.save(findBoard);
+
+        return saveBoard.getId();
     }
 
     @Transactional

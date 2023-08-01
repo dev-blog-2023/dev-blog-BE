@@ -38,12 +38,8 @@ public class BoardController {
     @ResponseBody
     @PostMapping("/save")
     public BoardDto postSaveBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                              @ModelAttribute SaveBoardDto saveBoardDto,
-                              MultipartFile thumbnail) throws IOException {
-        log.info("content = {}", saveBoardDto.getContent());
-        UploadFileDto uploadFileDto = fileService.upload(thumbnail);
-
-        Long boardId = boardService.saveBoard(saveBoardDto, userDetails.getId(), uploadFileDto.getFileName());
+                                  @ModelAttribute SaveBoardDto saveBoardDto) {
+        Long boardId = boardService.saveBoard(saveBoardDto, userDetails.getId());
 
         Document jsoupDoc = Jsoup.parse(saveBoardDto.getContent());
         Elements imgs = jsoupDoc.select("img");
@@ -76,7 +72,8 @@ public class BoardController {
     @PostMapping("/{id}/edit")
     public BoardDto postEditBoard(@PathVariable(value = "id") Long boardId,
                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                  @RequestBody EditBoardDto editBoardDto) {
+                                  @ModelAttribute EditBoardDto editBoardDto) {
+        Long id = boardService.editBoard(userDetails.getId(), boardId, editBoardDto);
         String content = editBoardDto.getContent();
 
         Document jsoupDoc = Jsoup.parse(content);
@@ -103,7 +100,7 @@ public class BoardController {
         fileEntityService.removeFileEntity(removeImgList);
         fileService.delete(removeImgList);
 
-        BoardDto boardDto = boardService.findById(boardId);
+        BoardDto boardDto = boardService.findById(id);
 
         return boardDto;
     }
@@ -112,6 +109,7 @@ public class BoardController {
     public void postDeleteBoard(@PathVariable(value = "id") Long boardId,
                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         boardService.deleteBoard(userDetails.getId(), boardId);
+        fileEntityService.deleteByBoardId(boardId);
     }
 
     private String getFileName(String url) {

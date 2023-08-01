@@ -2,10 +2,8 @@ package song.devlog1.security.authentication.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import song.devlog1.entity.User;
 import song.devlog1.security.userdetails.UserDetailsImpl;
 
 import java.util.Date;

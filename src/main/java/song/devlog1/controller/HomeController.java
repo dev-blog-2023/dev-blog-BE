@@ -3,18 +3,15 @@ package song.devlog1.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import song.devlog1.dto.FindPasswordDto;
-import song.devlog1.dto.FindUsernameDto;
-import song.devlog1.dto.ResetPasswordDto;
-import song.devlog1.dto.SignupDto;
-import song.devlog1.service.EmailService;
-import song.devlog1.service.EmailVerificationService;
-import song.devlog1.service.ResetPasswordTokenService;
-import song.devlog1.service.UserService;
+import song.devlog1.dto.*;
+import song.devlog1.entity.Board;
+import song.devlog1.service.*;
 
 @Slf4j
 @Controller
@@ -22,13 +19,20 @@ import song.devlog1.service.UserService;
 public class HomeController {
 
     private final EmailVerificationService emailVerificationService;
+    private final ResetPasswordTokenService resetPasswordTokenService;
     private final EmailService emailService;
     private final UserService userService;
-    private final ResetPasswordTokenService resetPasswordTokenService;
+    private final BoardService boardService;
 
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @GetMapping("/")
-    public void getHome() {
+    public Page<BoardPageDto> getHome(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<Board> boardPage = boardService.findAll(pageable);
 
+        Page<BoardPageDto> boardPageDtoPage = boardPage.map(BoardPageDto::new);
+
+        return boardPageDtoPage;
     }
 
     @ResponseStatus(HttpStatus.CREATED)

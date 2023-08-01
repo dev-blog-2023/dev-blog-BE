@@ -12,6 +12,7 @@ import song.devlog1.exception.notfound.FileEntityNotFoundException;
 import song.devlog1.repository.BoardJpaRepository;
 import song.devlog1.repository.FileEntityJpaRepository;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class FileEntityService {
 
     @Transactional
     public List<String> findFileNameByBoardId(Long boardId) {
-        List<FileEntity> fileEntityList = fileEntityRepository.findByBoardId(boardId);
+        List<FileEntity> fileEntityList = getFileEntityByBoardId(boardId);
 
         return fileEntityList.stream()
                 .map(FileEntity::getSaveFileName).toList();
@@ -50,6 +51,14 @@ public class FileEntityService {
             if (findFileEntity.isPresent()) {
                 fileEntityRepository.delete(findFileEntity.get());
             }
+        }
+    }
+
+    @Transactional
+    public void deleteByBoardId(Long boardId) {
+        List<FileEntity> findFileEntityList = getFileEntityByBoardId(boardId);
+        for (FileEntity fileEntity : findFileEntityList) {
+            fileEntityRepository.delete(fileEntity);
         }
     }
 
@@ -77,5 +86,9 @@ public class FileEntityService {
             throw new FileEntityNotFoundException("파일을 찾을 수 없습니다.");
         }
         return findFileEntity.get();
+    }
+
+    private List<FileEntity> getFileEntityByBoardId(Long boardId) {
+        return fileEntityRepository.findByBoardId(boardId);
     }
 }

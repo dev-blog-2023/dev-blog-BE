@@ -1,5 +1,6 @@
 package song.devlog1.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,9 +13,11 @@ import java.util.Optional;
 @Repository
 public interface FileEntityJpaRepository extends JpaRepository<FileEntity, Long> {
 
+    @EntityGraph(attributePaths = {"board"})
     @Query("select f from FileEntity f where f.saveFileName = :saveFileName")
     Optional<FileEntity> findBySaveFileName(@Param(value = "saveFileName") String saveFileName);
 
+    @EntityGraph(attributePaths = {"board"})
     @Query("select f from FileEntity f from f.board.id = :boardId")
     List<FileEntity> findByBoardId(@Param(value = "boardId") Long boardId);
 

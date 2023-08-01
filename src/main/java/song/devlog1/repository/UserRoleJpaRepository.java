@@ -1,5 +1,6 @@
 package song.devlog1.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,9 @@ import java.util.Optional;
 @Repository
 public interface UserRoleJpaRepository extends JpaRepository<UserRole, Long> {
 
+    @EntityGraph(attributePaths = {"user", "role"})
     @Query("select ur from UserRole ur where ur.user.id = :userId and ur.role.roleName = :roleName")
     Optional<UserRole> findByUserIdAndRoleName(@Param(value = "userId") Long userId,
                                                @Param(value = "roleName") RoleName roleName);
+
 }

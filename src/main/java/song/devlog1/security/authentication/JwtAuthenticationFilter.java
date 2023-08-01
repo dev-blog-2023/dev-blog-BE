@@ -18,7 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import song.devlog1.security.userdetails.UserDetailsServiceImpl;
 
 import java.io.IOException;
-import java.util.Base64;
 
 import static song.devlog1.security.authentication.jwt.JwtKey.*;
 

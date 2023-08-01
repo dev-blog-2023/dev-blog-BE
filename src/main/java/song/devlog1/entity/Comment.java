@@ -30,4 +30,8 @@ public class Comment extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Comment> childList = new ArrayList<>();
+
+    public Comment(String content) {
+        this.content = content;
+    }
 }
