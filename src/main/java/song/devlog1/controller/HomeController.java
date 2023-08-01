@@ -28,9 +28,7 @@ public class HomeController {
     @ResponseBody
     @GetMapping("/")
     public Page<BoardPageDto> getHome(@PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<Board> boardPage = boardService.findAll(pageable);
-
-        Page<BoardPageDto> boardPageDtoPage = boardPage.map(BoardPageDto::new);
+        Page<BoardPageDto> boardPageDtoPage = boardService.findAll(pageable);
 
         return boardPageDtoPage;
     }

@@ -10,17 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import song.devlog1.dto.BoardDto;
 import song.devlog1.dto.EditBoardDto;
 import song.devlog1.dto.SaveBoardDto;
-import song.devlog1.dto.UploadFileDto;
 import song.devlog1.security.userdetails.UserDetailsImpl;
 import song.devlog1.service.BoardService;
 import song.devlog1.service.FileEntityService;
 import song.devlog1.service.FileService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +69,7 @@ public class BoardController {
     @PostMapping("/{id}/edit")
     public BoardDto postEditBoard(@PathVariable(value = "id") Long boardId,
                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                  @ModelAttribute EditBoardDto editBoardDto) {
+                                  @RequestBody EditBoardDto editBoardDto) {
         Long id = boardService.editBoard(userDetails.getId(), boardId, editBoardDto);
         String content = editBoardDto.getContent();
 

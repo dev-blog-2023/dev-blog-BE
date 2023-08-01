@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.dto.BoardDto;
+import song.devlog1.dto.BoardPageDto;
 import song.devlog1.dto.EditBoardDto;
 import song.devlog1.dto.SaveBoardDto;
 import song.devlog1.entity.Board;
@@ -49,10 +50,11 @@ public class BoardService {
     }
 
     @Transactional
-    public Page<Board> findAll(Pageable pageable) {
+    public Page<BoardPageDto> findAll(Pageable pageable) {
         Page<Board> boardPage = boardRepository.findAll(pageable);
 
-        return boardPage;
+        Page<BoardPageDto> boardPageDtoPage = boardPage.map(BoardPageDto::new);
+        return boardPageDtoPage;
     }
 
     @Transactional
