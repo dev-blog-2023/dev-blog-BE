@@ -10,6 +10,7 @@ import song.devlog1.exception.notfound.FileNotFoundException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -37,6 +38,12 @@ public class FileService {
 
         if (!file.exists()) {
             throw new FileNotFoundException("파일을 찾을 수 없습니다.");
+        }
+    }
+
+    public void delete(List<String> saveFileNamesList) {
+        for (String saveFileName : saveFileNamesList) {
+            delete(saveFileName);
         }
     }
 

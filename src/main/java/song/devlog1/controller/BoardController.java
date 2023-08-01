@@ -74,9 +74,9 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PostMapping("/{id}/edit")
-    public void postEditBoard(@PathVariable(value = "id") Long boardId,
-                              @AuthenticationPrincipal UserDetailsImpl userDetails,
-                              @RequestBody EditBoardDto editBoardDto) {
+    public BoardDto postEditBoard(@PathVariable(value = "id") Long boardId,
+                                  @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                  @RequestBody EditBoardDto editBoardDto) {
         String content = editBoardDto.getContent();
 
         Document jsoupDoc = Jsoup.parse(content);
@@ -88,6 +88,30 @@ public class BoardController {
                 .map(this::getFileName)
                 .toList();
 
+        List<String> boardFileList = fileEntityService.findFileNameByBoardId(boardId);
+
+        List<String> addImgList = editImgList.stream()
+                .filter(editImg -> !boardFileList.contains(editImg))
+                .toList();
+
+        List<String> removeImgList = boardFileList.stream()
+                .filter(boardImg -> !editImgList.contains(boardImg))
+                .toList();
+
+        fileEntityService.attachFileToBoard(boardId, addImgList);
+
+        fileEntityService.removeFileEntity(removeImgList);
+        fileService.delete(removeImgList);
+
+        BoardDto boardDto = boardService.findById(boardId);
+
+        return boardDto;
+    }
+
+    @PostMapping("/{id}/delete")
+    public void postDeleteBoard(@PathVariable(value = "id") Long boardId,
+                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        boardService.deleteBoard(userDetails.getId(), boardId);
     }
 
     private String getFileName(String url) {

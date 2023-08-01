@@ -8,6 +8,7 @@ import song.devlog1.dto.BoardDto;
 import song.devlog1.dto.SaveBoardDto;
 import song.devlog1.entity.Board;
 import song.devlog1.entity.User;
+import song.devlog1.exception.invalid.InvalidAuthorizedException;
 import song.devlog1.exception.notfound.BoardNotFoundException;
 import song.devlog1.exception.notfound.UserNotFoundException;
 import song.devlog1.repository.BoardJpaRepository;
@@ -42,6 +43,16 @@ public class BoardService {
         BoardDto boardDto = new BoardDto(findBoard);
 
         return boardDto;
+    }
+
+    @Transactional
+    public void deleteBoard(Long userId, Long boardId) {
+        Board findBoard = getBoardById(boardId);
+        if (!findBoard.getWriter().getId().equals(userId)) {
+            throw new InvalidAuthorizedException("권한이 없습니다.");
+        }
+
+        boardRepository.delete(findBoard);
     }
 
     private User getUserById(Long userId) {

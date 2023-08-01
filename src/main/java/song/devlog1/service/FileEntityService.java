@@ -31,8 +31,26 @@ public class FileEntityService {
     }
 
     @Transactional
+    public List<String> findFileNameByBoardId(Long boardId) {
+        List<FileEntity> fileEntityList = fileEntityRepository.findByBoardId(boardId);
+
+        return fileEntityList.stream()
+                .map(FileEntity::getSaveFileName).toList();
+    }
+
+    @Transactional
     public void deleteFileEntity(String saveFileName) {
 
+    }
+
+    @Transactional
+    public void removeFileEntity(List<String> removeImgList) {
+        for (String img : removeImgList) {
+            Optional<FileEntity> findFileEntity = fileEntityRepository.findBySaveFileName(img);
+            if (findFileEntity.isPresent()) {
+                fileEntityRepository.delete(findFileEntity.get());
+            }
+        }
     }
 
     @Transactional
