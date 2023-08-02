@@ -52,8 +52,8 @@ class BoardServiceTest {
             if (commentDto.getParentId() == null) {
                 log.info("comment = {}", commentDto.getContent());
 
-                for (java.lang.Object o : commentDto.getre) {
-
+                for (CommentDto reply : commentDto.getReplyList()) {
+                    log.info("    reply = {}", reply.getContent());
                 }
             }
         }
