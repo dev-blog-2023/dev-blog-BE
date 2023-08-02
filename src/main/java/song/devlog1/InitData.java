@@ -3,17 +3,18 @@ package song.devlog1;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import song.devlog1.entity.Board;
+import song.devlog1.entity.Comment;
 import song.devlog1.entity.Role;
 import song.devlog1.entity.User;
-import song.devlog1.entity.UserRole;
 import song.devlog1.entity.role.RoleName;
+import song.devlog1.repository.BoardJpaRepository;
+import song.devlog1.repository.CommentJpaRepository;
 import song.devlog1.repository.RoleJpaRepository;
 import song.devlog1.repository.UserJpaRepository;
-import song.devlog1.repository.UserRoleJpaRepository;
 import song.devlog1.service.UserRoleService;
 
 @Slf4j
@@ -36,7 +37,8 @@ public class InitData {
         private final PasswordEncoder passwordEncoder;
         private final UserJpaRepository userRepository;
         private final RoleJpaRepository roleRepository;
-        private final UserRoleJpaRepository userRoleRepository;
+        private final BoardJpaRepository boardRepository;
+        private final CommentJpaRepository commentRepository;
         private final UserRoleService userRoleService;
 
         public void init1() {
@@ -73,6 +75,34 @@ public class InitData {
 
             userRoleService.grantRole(saveUserB.getId(), roleUser.getRoleName());
 
+
+            for (int i = 0; i < 20; i++) {
+                Board board = new Board();
+                board.setTitle("Title " + i);
+                board.setContent("Content " + i);
+                board.setWriter(userA);
+                boardRepository.save(board);
+            }
+
+            Board findBoard = boardRepository.findById(1L).get();
+
+            for (int i = 0; i < 3; i++) {
+                Comment comment = new Comment();
+                comment.setBoard(findBoard);
+                comment.setWriter(userA);
+                comment.setContent("Comment " + i);
+                Comment saveComment = commentRepository.save(comment);
+                if (i == 1) {
+                    for (int j = 0; j < 2; j++) {
+                        Comment reply = new Comment();
+                        reply.setBoard(findBoard);
+                        reply.setWriter(userA);
+                        reply.setParent(saveComment);
+                        reply.setContent("Reply " + j);
+                        commentRepository.save(reply);
+                    }
+                }
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ public interface FileEntityJpaRepository extends JpaRepository<FileEntity, Long>
     Optional<FileEntity> findBySaveFileName(@Param(value = "saveFileName") String saveFileName);
 
     @EntityGraph(attributePaths = {"board"})
-    @Query("select f from FileEntity f from f.board.id = :boardId")
+    @Query("select f from FileEntity f where f.board.id = :boardId")
     List<FileEntity> findByBoardId(@Param(value = "boardId") Long boardId);
 
 }
