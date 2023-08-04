@@ -79,7 +79,12 @@ public class BoardService {
 
     @Transactional
     public void deleteBoard(Long userId, Long boardId) {
-        Board findBoard = getBoardById(boardId);
+        Optional<Board> boardOptional = boardRepository.findById(boardId);
+        if (boardOptional.isEmpty()) {
+            return;
+        }
+
+        Board findBoard = boardOptional.get();
         if (!findBoard.getWriter().getId().equals(userId)) {
             throw new InvalidAuthorizedException("권한이 없습니다.");
         }

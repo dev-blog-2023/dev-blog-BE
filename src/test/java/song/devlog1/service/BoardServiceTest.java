@@ -5,11 +5,13 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
-import song.devlog1.dto.BoardDto;
-import song.devlog1.dto.CommentDto;
-import song.devlog1.dto.SaveBoardDto;
+import song.devlog1.dto.*;
 import song.devlog1.entity.Board;
+import song.devlog1.exception.invalid.InvalidAuthorizedException;
+import song.devlog1.exception.notfound.BoardNotFoundException;
 import song.devlog1.repository.BoardJpaRepository;
 
 import static org.assertj.core.api.Assertions.*;
@@ -38,7 +40,7 @@ class BoardServiceTest {
     }
 
     @Test
-    void find1() {
+    void findById1() {
         BoardDto findBoardDto = boardService.findById(1L);
 
         assertThat(findBoardDto.getId()).isEqualTo(1L);
@@ -57,6 +59,40 @@ class BoardServiceTest {
                 }
             }
         }
+    }
+
+    @Test
+    void findAll1() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Page<BoardPageDto> boardPage = boardService.findAll(pageRequest);
+
+        assertThat(boardPage.getTotalPages()).isEqualTo(2);
+    }
+
+    @Test
+    void edit1() {
+        EditBoardDto editBoardDto = new EditBoardDto();
+        editBoardDto.setTitle("Test Edit Title");
+        editBoardDto.setContent("Test Edit Content");
+        Long id = boardService.editBoard(1L, 1L, editBoardDto);
+
+        Board findBoard = boardRepository.findById(id).get();
+
+        assertThat(findBoard.getTitle()).isEqualTo(editBoardDto.getTitle());
+
+        assertThatThrownBy(() -> boardService.editBoard(2L, 1L, editBoardDto))
+                .isInstanceOf(InvalidAuthorizedException.class);
+    }
+
+    @Test
+    void delete1() {
+        boardService.deleteBoard(1L, 1L);
+
+        assertThatThrownBy(() -> boardService.findById(1L)).isInstanceOf(BoardNotFoundException.class);
+
+        assertThatThrownBy(() -> boardService.deleteBoard(2L, 2L))
+                .isInstanceOf(InvalidAuthorizedException.class);
     }
 
 }
