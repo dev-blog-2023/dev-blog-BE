@@ -4,24 +4,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.MailException;
 import org.springframework.test.context.ActiveProfiles;
+import song.devlog1.entity.Role;
+import song.devlog1.entity.role.RoleName;
 
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-class EmailServiceTest {
+class RoleServiceTest {
 
     @Autowired
-    EmailService emailService;
+    RoleService roleService;
 
     @Test
-    void test1() {
-        emailService.sendMail("dkclasltmf@naver.com", "Test Email", "Test");
+    void create1() {
+        Role roleAdmin = roleService.findOrCreateRole(RoleName.ROLE_ADMIN);
 
-        assertThatThrownBy(() -> emailService.sendMail("d", "Test Email", "Test"))
-                .isInstanceOf(MailException.class);
+        assertThat(roleAdmin.getRoleName()).isEqualTo(RoleName.ROLE_ADMIN);
     }
+
 }

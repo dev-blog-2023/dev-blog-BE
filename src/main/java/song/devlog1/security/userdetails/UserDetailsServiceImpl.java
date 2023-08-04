@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.entity.User;
 import song.devlog1.exception.notfound.UserNotFoundException;
 import song.devlog1.repository.UserJpaRepository;
-import song.devlog1.security.userdetails.UserDetailsImpl;
 
 import java.util.Optional;
 

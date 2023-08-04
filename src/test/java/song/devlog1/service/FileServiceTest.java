@@ -1,7 +1,6 @@
 package song.devlog1.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -33,18 +31,33 @@ class FileServiceTest {
 
     @Test
     void upload1() throws IOException {
-        String content = "mock";
+        String content = "Test Content";
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "file",
-                "mock.txt",
+                "Test Mock Multipart.txt",
                 "text/plain",
                 content.getBytes(StandardCharsets.UTF_8)
         );
-
         UploadFileDto uploadFileDto = fileService.upload(mockMultipartFile);
 
         File file = new File(path + uploadFileDto.getFileName());
         assertThat(file.exists()).isTrue();
-//        file.delete();
+    }
+
+    @Test
+    void delete1() throws Exception {
+        String content = "Test Content";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "Test Mock Multipart.txt",
+                "text/plain",
+                content.getBytes(StandardCharsets.UTF_8)
+        );
+        UploadFileDto uploadFileDto = fileService.upload(mockMultipartFile);
+
+        fileService.delete(uploadFileDto.getFileName());
+
+        File file = new File(path + uploadFileDto.getFileName());
+        assertThat(file.exists()).isFalse();
     }
 }

@@ -12,7 +12,6 @@ import song.devlog1.exception.notfound.FileEntityNotFoundException;
 import song.devlog1.repository.BoardJpaRepository;
 import song.devlog1.repository.FileEntityJpaRepository;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +24,12 @@ public class FileEntityService {
     private final BoardJpaRepository boardRepository;
 
     @Transactional
-    public void saveFileEntity(UploadFileDto uploadFileDto) {
+    public Long saveFileEntity(UploadFileDto uploadFileDto) {
         FileEntity fileEntity = new FileEntity(uploadFileDto.getUploadFileName(), uploadFileDto.getFileName());
 
-        fileEntityRepository.save(fileEntity);
+        FileEntity saveFileEntity = fileEntityRepository.save(fileEntity);
+
+        return saveFileEntity.getId();
     }
 
     @Transactional
@@ -41,16 +42,18 @@ public class FileEntityService {
 
     @Transactional
     public void deleteFileEntity(String saveFileName) {
+        Optional<FileEntity> findFileEntity = fileEntityRepository.findBySaveFileName(saveFileName);
+        if (findFileEntity.isEmpty()) {
+            return;
+        }
 
+        fileEntityRepository.delete(findFileEntity.get());
     }
 
     @Transactional
-    public void removeFileEntity(List<String> removeImgList) {
+    public void deleteFileEntity(List<String> removeImgList) {
         for (String img : removeImgList) {
-            Optional<FileEntity> findFileEntity = fileEntityRepository.findBySaveFileName(img);
-            if (findFileEntity.isPresent()) {
-                fileEntityRepository.delete(findFileEntity.get());
-            }
+            deleteFileEntity(img);
         }
     }
 

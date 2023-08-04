@@ -94,8 +94,10 @@ public class BoardController {
 
         fileEntityService.attachFileToBoard(boardId, addImgList);
 
-        fileEntityService.removeFileEntity(removeImgList);
-        fileService.delete(removeImgList);
+        for (String img : removeImgList) {
+            fileEntityService.deleteFileEntity(img);
+            fileService.delete(img);
+        }
 
         BoardDto boardDto = boardService.findById(id);
 

@@ -24,10 +24,10 @@ public class UserRoleService {
     private final RoleService roleService;
 
     @Transactional
-    public void grantRole(Long userId, RoleName roleName) {
+    public Long grantRole(Long userId, RoleName roleName) {
         Optional<UserRole> findUserRole = getUserRoleByUserIdAndRoleName(userId, roleName);
         if (findUserRole.isPresent()) {
-            return;
+            return findUserRole.get().getId();
         }
         User findUser = getUserById(userId);
 
@@ -35,7 +35,9 @@ public class UserRoleService {
 
         UserRole userRole = new UserRole(findUser, role);
 
-        userRoleRepository.save(userRole);
+        UserRole saveUserRole = userRoleRepository.save(userRole);
+
+        return saveUserRole.getId();
     }
 
     @Transactional

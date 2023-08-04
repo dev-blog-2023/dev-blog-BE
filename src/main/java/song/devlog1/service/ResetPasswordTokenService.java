@@ -38,7 +38,7 @@ public class ResetPasswordTokenService {
 
     @Transactional
     public String verifyResetPasswordToken(String token) {
-        ResetPasswordToken resetPasswordToken = verifyToken(token);
+        ResetPasswordToken resetPasswordToken = getResetPasswordTokeByToken(token);
         if (resetPasswordToken.getExpiryDateTime().isBefore(LocalDateTime.now())) {
             throw new AlreadyExpiredTokenException("이미 만료된 토큰입니다.");
         }
@@ -46,7 +46,7 @@ public class ResetPasswordTokenService {
         return resetPasswordToken.getUsername();
     }
 
-    private ResetPasswordToken verifyToken(String token) {
+    private ResetPasswordToken getResetPasswordTokeByToken(String token) {
         Optional<ResetPasswordToken> findToken = resetPasswordRepository.findByToken(token);
         if (findToken.isEmpty()) {
             throw new ResetPasswordTokenNotFoundException("토큰을 찾을 수 없습니다.");
