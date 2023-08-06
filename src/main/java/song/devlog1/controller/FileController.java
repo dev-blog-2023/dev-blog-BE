@@ -6,10 +6,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import song.devlog1.dto.FileUrlDto;
 import song.devlog1.dto.UploadFileDto;
 import song.devlog1.service.FileEntityService;
 import song.devlog1.service.FileService;
@@ -37,21 +37,23 @@ public class FileController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/downloadFile/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Resource getFile(@PathVariable(value = "fileName") String fileName) throws MalformedURLException {
+    @GetMapping(value = "/downloadFile/{fileName}")
+    public ResponseEntity<Resource> getFile(@PathVariable(value = "fileName") String fileName) throws MalformedURLException {
         fileService.isExists(fileName);
-        return new UrlResource("file:" + fileService.getFullPath(fileName));
+        UrlResource resource = new UrlResource("file:" + fileService.getFullPath(fileName));
+        String contentType = setContentType(fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @GetMapping("/downloadFile/{fileName}")
-    public FileUrlDto getFileUrl(@PathVariable(value = "fileName") String fileName) {
-        fileService.isExists(fileName);
-        String fullPath = fileService.getFullPath(fileName);
-
-        FileUrlDto fileUrlDto = new FileUrlDto(fullPath);
-
-        return fileUrlDto;
+    private String setContentType(String fileName) {
+        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+            return "image/jpeg";
+        } else if (fileName.endsWith(".png")) {
+            return "image/png";
+        }
+        return "application/octet-stream";
     }
 }

@@ -1,18 +1,18 @@
 package song.devlog1.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import song.devlog1.dto.UserDto;
+import song.devlog1.dto.*;
 import song.devlog1.entity.User;
 import song.devlog1.security.userdetails.UserDetailsImpl;
 import song.devlog1.service.UserService;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
@@ -20,7 +20,6 @@ public class UserController {
     private final UserService userService;
 
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @GetMapping
     public UserDto getUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User findUser = userService.findUser(userDetails.getId());
@@ -33,35 +32,37 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/editEmail")
     public void postEditEmail(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                              @RequestBody String email) {
-        Long id = userService.editEmail(userDetails.getId(), email);
+                              @RequestBody EditEmailDto editEmailDto) {
+        Long id = userService.editEmail(userDetails.getId(), editEmailDto.getEmail());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/editPassword")
     public void postEditPassword(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                 @RequestBody String originalPassword,
-                                 @RequestBody String newPassword) {
-        Long id = userService.editPassword(userDetails.getId(), originalPassword, newPassword);
+                                 @RequestBody EditPasswordDto editPasswordDto) {
+        Long id = userService.editPassword(userDetails.getId(), editPasswordDto.getOriginalPassword(), editPasswordDto.getNewPassword());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/editUsername")
     public void postEditUsername(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                 @RequestBody String username) {
-        Long id = userService.editUsername(userDetails.getId(), username);
+                                 @RequestBody EditUsernameDto editUsernameDto) {
+        Long id = userService.editUsername(userDetails.getId(), editUsernameDto.getUsername());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/editName")
     public void postEditName(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                             @RequestBody String name) {
-        Long id = userService.editName(userDetails.getId(), name);
+                             @RequestBody EditNameDto editNameDto) {
+        Long id = userService.editName(userDetails.getId(), editNameDto.getName());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/delete")
-    public void postDeleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public void postDeleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                               HttpServletRequest request) {
         userService.deleteUser(userDetails.getId());
+
+        request.getSession(false).invalidate();
     }
 }

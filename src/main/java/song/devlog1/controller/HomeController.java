@@ -7,14 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import song.devlog1.dto.*;
-import song.devlog1.entity.Board;
 import song.devlog1.service.*;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class HomeController {
 
@@ -25,7 +23,6 @@ public class HomeController {
     private final BoardService boardService;
 
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @GetMapping("/")
     public Page<BoardPageDto> getHome(@PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<BoardPageDto> boardPageDtoPage = boardService.findAll(pageable);
@@ -41,27 +38,25 @@ public class HomeController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verifyUsername")
-    public void postVerifyUsername(@RequestBody String username) {
-        userService.validUsername(username);
+    public void postVerifyUsername(@RequestBody VerifyUsernameDto verifyUsernameDto) {
+        userService.validUsername(verifyUsernameDto.getUsername());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verifyEmail")
-    public void postVerifyEmail(@RequestBody String email) {
-        String token = emailVerificationService.createEmailVerificationToken(email);
-        emailService.sendMail(email, "email verification", "token: " + token);
+    public void postVerifyEmail(@RequestBody VerifyEmailDto verifyEmailDto) {
+        String token = emailVerificationService.createEmailVerificationToken(verifyEmailDto.getEmail());
+        emailService.sendMail(verifyEmailDto.getEmail(), "email verification", "token: " + token);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verifyEmail/{token}")
     public void postVerifyEmailToken(@PathVariable(value = "token") String token,
-                                     @RequestBody String email) {
-        Long id = emailVerificationService.verifyEmailVerificationToken(email, token);
-        emailVerificationService.deleteEmailVerificationToken(id);
+                                     @RequestBody VerifyEmailDto verifyEmailDto) {
+        Long id = emailVerificationService.verifyEmailVerificationToken(verifyEmailDto.getEmail(), token);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @PostMapping("/findUsername")
     public String postFindUsername(@RequestBody FindUsernameDto findUsernameDto) {
         String username = userService.findUsername(findUsernameDto.getName(), findUsernameDto.getEmail());

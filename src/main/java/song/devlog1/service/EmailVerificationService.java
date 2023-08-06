@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.entity.EmailVerificationToken;
 import song.devlog1.entity.User;
+import song.devlog1.exception.already.AlreadyExistsEmailException;
 import song.devlog1.exception.already.AlreadyExpiredTokenException;
 import song.devlog1.exception.already.AlreadyVerifiedTokenException;
 import song.devlog1.exception.notfound.EmailVerificationTokenNotFoundException;
@@ -26,11 +27,13 @@ public class EmailVerificationService {
 
     @Transactional
     public String createEmailVerificationToken(String email) {
-
-        isAlreadyVerified(email);
+        isAlreadyUsedEmail(email);
 
         Optional<EmailVerificationToken> findToken = emailVerificationRepository.findByEmail(email);
         if (findToken.isPresent()) {
+            if (findToken.get().isVerified()) {
+                throw new AlreadyVerifiedTokenException("이미 인증된 토큰입니다.");
+            }
             EmailVerificationToken token = findToken.get();
             token.setToken(getUUIDToken());
             return token.getToken();
@@ -73,10 +76,10 @@ public class EmailVerificationService {
         }
     }
 
-    private void isAlreadyVerified(String email) {
+    private void isAlreadyUsedEmail(String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
         if (findUser.isPresent()) {
-            throw new AlreadyVerifiedTokenException("이미 인증된 이메일입니다.");
+            throw new AlreadyExistsEmailException("이미 사용중인 이메일입니다.");
         }
     }
 

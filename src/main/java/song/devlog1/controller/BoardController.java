@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import song.devlog1.dto.BoardDto;
 import song.devlog1.dto.EditBoardDto;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardController {
@@ -31,11 +30,10 @@ public class BoardController {
     private final FileEntityService fileEntityService;
     private final FileService fileService;
 
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/save")
     public BoardDto postSaveBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                  @ModelAttribute SaveBoardDto saveBoardDto) {
+                                  @RequestBody SaveBoardDto saveBoardDto) {
         Long boardId = boardService.saveBoard(saveBoardDto, userDetails.getId());
 
         Document jsoupDoc = Jsoup.parse(saveBoardDto.getContent());
@@ -56,7 +54,6 @@ public class BoardController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @GetMapping("/{id}")
     public BoardDto getBoard(@PathVariable(value = "id") Long boardId) {
         BoardDto boardDto = boardService.findById(boardId);
@@ -65,7 +62,6 @@ public class BoardController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @PostMapping("/{id}/edit")
     public BoardDto postEditBoard(@PathVariable(value = "id") Long boardId,
                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -104,6 +100,7 @@ public class BoardController {
         return boardDto;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}/delete")
     public void postDeleteBoard(@PathVariable(value = "id") Long boardId,
                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {

@@ -2,6 +2,9 @@ package song.devlog1.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +14,7 @@ import song.devlog1.exception.already.AlreadyExistsUsernameException;
 import song.devlog1.exception.invalid.InvalidRequestParameterException;
 import song.devlog1.exception.notfound.UserNotFoundException;
 import song.devlog1.repository.UserJpaRepository;
+import song.devlog1.security.userdetails.UserDetailsImpl;
 
 import java.util.Optional;
 
@@ -77,6 +81,9 @@ public class UserService {
         findUser.setEmail(newEmail);
 
         User saveUser = userRepository.save(findUser);
+
+        updateSecurityContext(saveUser);
+
         return saveUser.getId();
     }
 
@@ -94,6 +101,9 @@ public class UserService {
         findUser.setPassword(passwordEncoder.encode(newPassword));
 
         User saveUser = userRepository.save(findUser);
+
+        updateSecurityContext(saveUser);
+
         return saveUser.getId();
     }
 
@@ -105,6 +115,9 @@ public class UserService {
         findUser.setUsername(newUsername);
 
         User saveUser = userRepository.save(findUser);
+
+        updateSecurityContext(saveUser);
+
         return saveUser.getId();
     }
 
@@ -114,12 +127,17 @@ public class UserService {
         findUser.setName(newName);
 
         User saveUser = userRepository.save(findUser);
+
+        updateSecurityContext(saveUser);
+
         return saveUser.getId();
     }
 
     @Transactional
     public void deleteUser(Long userId) {
         User findUser = getUserById(userId);
+
+        SecurityContextHolder.clearContext();
 
         userRepository.delete(findUser);
     }
@@ -146,5 +164,14 @@ public class UserService {
             throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
         }
         return findUser.get();
+    }
+
+    public void updateSecurityContext(User user) {
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(authentication);
     }
 }

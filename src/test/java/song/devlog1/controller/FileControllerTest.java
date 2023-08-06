@@ -1,25 +1,23 @@
 package song.devlog1.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.MvcResult;
 import song.devlog1.dto.UploadFileDto;
-import song.devlog1.entity.FileEntity;
-import song.devlog1.repository.FileEntityJpaRepository;
 import song.devlog1.service.FileService;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,12 +30,12 @@ class FileControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    FileService fileService;
+    ObjectMapper objectMapper;
     @Autowired
-    FileEntityJpaRepository fileEntityRepository;
+    FileService fileService;
 
     @Test
-    void saveFile1() throws Exception {
+    void uploadFile1() throws Exception {
         String content = "mock";
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "uploadFile",
@@ -46,16 +44,20 @@ class FileControllerTest {
                 content.getBytes(StandardCharsets.UTF_8)
         );
 
-        mockMvc.perform(multipart("/file/uploadFile").file(mockMultipartFile))
-                .andExpect(status().isOk());
+        MvcResult mvcResult = mockMvc.perform(multipart("/file/uploadFile").file(mockMultipartFile))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        List<FileEntity> fileEntityList = fileEntityRepository.findAll();
-        Assertions.assertThat(fileEntityList.size()).isEqualTo(1L);
+        String response = mvcResult.getResponse().getContentAsString();
+        JsonNode jsonNode = objectMapper.readTree(response);
+        String uploadFileName = jsonNode.get("uploadFileName").asText();
 
+        log.info(response);
+        assertThat(uploadFileName).isEqualTo(mockMultipartFile.getOriginalFilename());
     }
 
     @Test
-    void saveFile2() throws Exception {
+    void downloadFile1() throws Exception {
         String content = "mock";
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "uploadFile",
@@ -63,11 +65,16 @@ class FileControllerTest {
                 "text/plain",
                 content.getBytes(StandardCharsets.UTF_8)
         );
-
         UploadFileDto uploadFileDto = fileService.upload(mockMultipartFile);
 
-        mockMvc.perform(get("/file/downloadFile/{fileName}", uploadFileDto.getFileName()))
-                .andExpect(status().isOk());
+        MvcResult mvcResult = mockMvc.perform(get("/file/downloadFile/{fileName}", uploadFileDto.getFileName())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
 
+        byte[] mockMultipartBinary = mockMultipartFile.getBytes();
+        byte[] responseBinary = mvcResult.getResponse().getContentAsByteArray();
+
+        assertThat(responseBinary).isEqualTo(mockMultipartBinary);
     }
 }

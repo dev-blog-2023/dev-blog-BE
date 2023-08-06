@@ -1,25 +1,27 @@
 package song.devlog1.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import song.devlog1.dto.ResetPasswordDto;
-import song.devlog1.entity.ResetPasswordToken;
+import org.springframework.test.web.servlet.MvcResult;
+import song.devlog1.dto.SignupDto;
+import song.devlog1.dto.VerifyEmailDto;
+import song.devlog1.dto.VerifyUsernameDto;
 import song.devlog1.entity.User;
+import song.devlog1.repository.EmailVerificationJpaRepository;
 import song.devlog1.repository.ResetPasswordTokenJpaRepository;
 import song.devlog1.repository.UserJpaRepository;
+import song.devlog1.service.EmailVerificationService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,61 +33,133 @@ class HomeControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    UserJpaRepository userRepository;
+    @Autowired
+    EmailVerificationService emailVerificationService;
+    @Autowired
+    EmailVerificationJpaRepository emailVerificationRepository;
 
     @Autowired
     ResetPasswordTokenJpaRepository resetPasswordTokenRepository;
-
-    @Autowired
-    UserJpaRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Test
-    void login1() throws Exception {
-        mockMvc.perform(post("/login")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", "a")
-                        .param("password", "a"))
+    void home1() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+        JsonNode jsonNode = objectMapper.readTree(response);
+        Long pageNumber = jsonNode.get("pageable").get("pageNumber").asLong();
+
+        assertThat(pageNumber).isEqualTo(0L);
+    }
+
+    @Test
+    void signup1() throws Exception {
+        SignupDto signupDto = new SignupDto();
+        signupDto.setUsername("Test Signup Username");
+        signupDto.setName("Test Signup Name");
+        signupDto.setEmail("TestSignup@email.com");
+        signupDto.setPassword("Test Signup Password");
+        String requestJson = objectMapper.writeValueAsString(signupDto);
+
+        mockMvc.perform(post("/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isCreated());
+
+        assertThat(userRepository.findByUsername(signupDto.getUsername()).get()).isNotNull();
+
+        User findUser = userRepository.findByUsername(signupDto.getUsername()).get();
+        assertThat(findUser.getUsername()).isEqualTo(signupDto.getUsername());
+    }
+
+    @Test
+    void verifyUsername1() throws Exception {
+        VerifyUsernameDto usableUsernameDto = new VerifyUsernameDto();
+        usableUsernameDto.setUsername("Test Verify Username");
+        String requestJson = objectMapper.writeValueAsString(usableUsernameDto);
+
+        mockMvc.perform(post("/verifyUsername")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithUserDetails(value = "a")
-    void admin1() throws Exception {
-        mockMvc.perform(get("/admin"))
+    void verifyUsername2() throws Exception {
+        VerifyUsernameDto AlreadyUsernameDto = new VerifyUsernameDto();
+        AlreadyUsernameDto.setUsername("a");
+        String requestJson = objectMapper.writeValueAsString(AlreadyUsernameDto);
+
+        mockMvc.perform(post("/verifyUsername")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void verifyEmail1() throws Exception {
+        VerifyEmailDto verifyEmailDto = new VerifyEmailDto();
+        verifyEmailDto.setEmail("dkclasltmf@naver.com");
+        String requestJson = objectMapper.writeValueAsString(verifyEmailDto);
+
+        mockMvc.perform(post("/verifyEmail")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithUserDetails(value = "b")
-    void admin2() throws Exception {
-        mockMvc.perform(get("/admin"))
-                .andExpect(status().isForbidden());
+    void verifyEmail2() throws Exception {
+        VerifyEmailDto verifyEmailDto = new VerifyEmailDto();
+        verifyEmailDto.setEmail("emailException");
+        String requestJson = objectMapper.writeValueAsString(verifyEmailDto);
+
+        mockMvc.perform(post("/verifyEmail")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
-    void findUsername1() throws Exception {
-        String jsonRequest = "{\"name\":\"a\", \"email\":\"dkclasltmf22@naver.com\"}";
+    void verifyEmail3() throws Exception {
+        VerifyEmailDto verifyEmailDto = new VerifyEmailDto();
+        verifyEmailDto.setEmail("dkclasltmf22@naver.com");
+        String requestJson = objectMapper.writeValueAsString(verifyEmailDto);
 
-        mockMvc.perform(post("/findUsername").contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
-                .andExpect(jsonPath("$.username").value("a"));
+        MvcResult mvcResult = mockMvc.perform(post("/verifyEmail")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
 
+        String response = mvcResult.getResponse().getContentAsString();
+        String responseException = objectMapper.readTree(response).toPrettyString();
+        log.info(responseException);
     }
 
     @Test
-    void resetPassword1() throws Exception {
-        ResetPasswordToken resetPasswordToken = new ResetPasswordToken("a");
-        resetPasswordToken.setToken("abc");
-        resetPasswordTokenRepository.save(resetPasswordToken);
+    void verifyEmailToken1() throws Exception {
+        VerifyEmailDto verifyEmailDto = new VerifyEmailDto();
+        verifyEmailDto.setEmail("Test Verify Email");
+        String requestJson = objectMapper.writeValueAsString(verifyEmailDto);
 
-        String jsonRequest = "{\"newPassword\":\"b\"}";
+        String token = emailVerificationService.createEmailVerificationToken(verifyEmailDto.getEmail());
 
-        mockMvc.perform(post("/resetPassword/{token}", "abc")
-                        .contentType(MediaType.APPLICATION_JSON).content(jsonRequest))
+        mockMvc.perform(post("/verifyEmail/{token}", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isOk());
 
-        User user = userRepository.findById(1L).get();
-        Assertions.assertThat(passwordEncoder.matches("b", user.getPassword())).isTrue();
+        assertThat(emailVerificationRepository.findByEmail(verifyEmailDto.getEmail()).get().isVerified())
+                .isTrue();
     }
+
 }
