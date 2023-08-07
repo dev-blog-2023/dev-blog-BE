@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import song.devlog1.security.authentication.AuthenticationHandler;
 import song.devlog1.security.authentication.JwtAuthenticationFilter;
 import song.devlog1.security.authentication.LoginFailureHandler;
 import song.devlog1.security.authentication.LoginSuccessHandler;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationHandler authenticationHandler;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -39,9 +41,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/login", "logout", "/signup", "/css/**", "/*.ico", "/*.js", "/error").permitAll()
                         .requestMatchers(regexMatcher("^/board/[0-9]+$")).permitAll()
-//                        .requestMatchers("/board/**").authenticated()
-//                        .requestMatchers("/comment/**").authenticated()
-//                        .requestMatchers("/admin/**").hasAuthority(RoleName.ROLE_ADMIN.name())
+                        .requestMatchers("/board/**").authenticated()
+                        .requestMatchers("/comment/**").authenticated()
+                        .requestMatchers("/admin/**").hasAuthority(RoleName.ROLE_ADMIN.name())
                         .anyRequest().permitAll())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
@@ -49,6 +51,9 @@ public class SecurityConfig {
                         .passwordParameter("password")
                         .successHandler(loginSuccessHandler)
                         .failureHandler(loginFailureHandler))
+                .exceptionHandling(exceptionHandling -> {
+                    exceptionHandling.authenticationEntryPoint(authenticationHandler);
+                })
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")

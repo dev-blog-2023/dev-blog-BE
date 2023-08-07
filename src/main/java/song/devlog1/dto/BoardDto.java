@@ -23,6 +23,7 @@ public class BoardDto {
         this.content = findBoard.getContent();
         this.writer = findBoard.getWriter().getUsername();
         this.createDateTime = findBoard.getCreateDate();
-        this.commentList = findBoard.getCommentList().stream().map(CommentDto::new).toList();
+        this.commentList = findBoard.getCommentList().stream().filter(comment -> comment.getParent() == null)
+                .map(CommentDto::new).toList();
     }
 }

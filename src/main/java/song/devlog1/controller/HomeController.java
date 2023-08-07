@@ -9,7 +9,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import song.devlog1.dto.*;
-import song.devlog1.exception.notfound.BoardNotFoundException;
 import song.devlog1.service.*;
 
 @Slf4j

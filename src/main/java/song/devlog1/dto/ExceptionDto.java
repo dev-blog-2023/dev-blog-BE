@@ -11,4 +11,9 @@ public class ExceptionDto {
         this.field = field;
         this.message = message;
     }
+
+    public ExceptionDto(String message) {
+        this.field = "exception";
+        this.message = message;
+    }
 }
