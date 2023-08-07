@@ -113,8 +113,14 @@ class BoardControllerTest {
     @WithUserDetails(value = "b")
     void delete2() throws Exception {
         Long boardId = 1L;
-        mockMvc.perform(post("/board/{boardId}/delete", boardId))
-                .andExpect(status().is4xxClientError());
+        MvcResult mvcResult = mockMvc.perform(post("/board/{boardId}/delete", boardId))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+        String responseJson = objectMapper.readTree(response).toPrettyString();
+
+        log.info(responseJson);
     }
 
 }

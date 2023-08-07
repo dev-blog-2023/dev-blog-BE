@@ -3,6 +3,7 @@ package song.devlog1.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import song.devlog1.dto.EditEmailDto;
 import song.devlog1.dto.EditNameDto;
 import song.devlog1.dto.EditPasswordDto;
@@ -26,6 +30,7 @@ import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
@@ -37,11 +42,21 @@ class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
+    WebApplicationContext webApplicationContext;
+    @Autowired
     ObjectMapper objectMapper;
     @Autowired
     UserJpaRepository userJpaRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void beforeEach() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .addFilter(new CharacterEncodingFilter("utf-8", true))
+                .alwaysDo(print())
+                .build();
+    }
 
     @Test
     @WithUserDetails(value = "a")
