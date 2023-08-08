@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import song.devlog1.dto.*;
+import song.devlog1.security.userdetails.UserDetailsImpl;
 import song.devlog1.service.*;
 
 @Slf4j
@@ -91,5 +93,11 @@ public class HomeController {
         String username = resetPasswordTokenService.verifyResetPasswordToken(token);
 
         Long id = userService.resetPassword(username, resetPasswordDto.getNewPassword());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/ud")
+    public UserDetailsImpl getud(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userDetails;
     }
 }

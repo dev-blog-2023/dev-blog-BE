@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import song.devlog1.dto.BoardDto;
+import song.devlog1.dto.BoardResponseDto;
 import song.devlog1.dto.EditBoardDto;
 import song.devlog1.dto.SaveBoardDto;
+import song.devlog1.entity.Board;
 import song.devlog1.security.userdetails.UserDetailsImpl;
 import song.devlog1.service.BoardService;
 import song.devlog1.service.FileEntityService;
@@ -32,7 +34,7 @@ public class BoardController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/save")
-    public BoardDto postSaveBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    public BoardResponseDto postSaveBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                   @RequestBody SaveBoardDto saveBoardDto) {
         Long boardId = boardService.saveBoard(saveBoardDto, userDetails.getId());
 
@@ -48,22 +50,29 @@ public class BoardController {
 
         fileEntityService.attachFileToBoard(boardId, imgList);
 
-        BoardDto boardDto = boardService.findById(boardId);
+        BoardResponseDto boardResponseDto = new BoardResponseDto(boardId);
 
-        return boardDto;
+        return boardResponseDto;
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public BoardDto getBoard(@PathVariable(value = "id") Long boardId) {
-        BoardDto boardDto = boardService.findById(boardId);
+    public BoardDto getBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                             @PathVariable(value = "id") Long boardId) {
+
+        BoardDto boardDto = null;
+        if (userDetails != null) {
+            boardDto = boardService.findById(boardId, userDetails.getId());
+        } else {
+            boardDto = boardService.findById(boardId);
+        }
 
         return boardDto;
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}/edit")
-    public BoardDto postEditBoard(@PathVariable(value = "id") Long boardId,
+    public BoardResponseDto postEditBoard(@PathVariable(value = "id") Long boardId,
                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
                                   @RequestBody EditBoardDto editBoardDto) {
         Long id = boardService.editBoard(userDetails.getId(), boardId, editBoardDto);
@@ -95,9 +104,9 @@ public class BoardController {
             fileService.delete(img);
         }
 
-        BoardDto boardDto = boardService.findById(id);
+        BoardResponseDto boardResponseDto = new BoardResponseDto(id);
 
-        return boardDto;
+        return boardResponseDto;
     }
 
     @ResponseStatus(HttpStatus.OK)

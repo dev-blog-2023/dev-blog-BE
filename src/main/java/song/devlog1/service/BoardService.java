@@ -50,6 +50,15 @@ public class BoardService {
     }
 
     @Transactional
+    public BoardDto findById(Long boardId, Long userId) {
+        Board findBoard = getBoardById(boardId);
+
+        BoardDto boardDto = new BoardDto(findBoard, userId);
+
+        return boardDto;
+    }
+
+    @Transactional
     public Page<BoardPageDto> findAll(Pageable pageable) {
         Page<Board> boardPage = boardRepository.findAll(pageable);
 
