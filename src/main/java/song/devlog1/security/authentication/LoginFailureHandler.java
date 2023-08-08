@@ -32,8 +32,8 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.info("username = {}, password = {}", request.getParameter("username"), request.getParameter("password"));
 
-        HttpStatus status = INTERNAL_SERVER_ERROR;
-        String message = "예외가 발생했습니다.";
+        HttpStatus status;
+        String message;
         List<ExceptionDto> messages = new ArrayList<>();
 
         if (exception instanceof BadCredentialsException || exception instanceof UsernameNotFoundException) {
