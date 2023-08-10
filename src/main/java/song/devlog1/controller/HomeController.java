@@ -77,7 +77,7 @@ public class HomeController {
 
         String token = resetPasswordTokenService.saveResetPasswordToken(username);
         emailService.sendMail(findPasswordDto.getEmail(), "reset password",
-                "http://localhost:8080/resetPassword/" + token);
+                "http://52.79.222.161:8080/resetPassword/" + token);
     }
 
     @ResponseStatus(HttpStatus.OK)
