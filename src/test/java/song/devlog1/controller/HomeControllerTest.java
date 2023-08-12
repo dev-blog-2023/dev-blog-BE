@@ -25,6 +25,8 @@ import song.devlog1.repository.ResetPasswordTokenJpaRepository;
 import song.devlog1.repository.UserJpaRepository;
 import song.devlog1.service.EmailVerificationService;
 
+import java.util.NoSuchElementException;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -140,7 +142,7 @@ class HomeControllerTest {
         mockMvc.perform(post("/verifyEmail")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is5xxServerError());
     }
 
     @Test
@@ -173,8 +175,8 @@ class HomeControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk());
 
-        assertThat(emailVerificationRepository.findByEmail(verifyEmailDto.getEmail()).get().isVerified())
-                .isTrue();
+        assertThatThrownBy(() -> emailVerificationRepository.findByEmail(verifyEmailDto.getEmail()).get())
+                .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test

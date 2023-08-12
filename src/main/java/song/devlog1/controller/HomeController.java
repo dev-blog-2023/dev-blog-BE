@@ -56,6 +56,7 @@ public class HomeController {
     public void postVerifyEmailToken(@PathVariable(value = "token") String token,
                                      @RequestBody VerifyEmailDto verifyEmailDto) {
         Long id = emailVerificationService.verifyEmailVerificationToken(verifyEmailDto.getEmail(), token);
+        emailVerificationService.deleteEmailVerificationToken(id);
     }
 
     @ResponseStatus(HttpStatus.OK)

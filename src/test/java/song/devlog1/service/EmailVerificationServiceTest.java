@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import song.devlog1.entity.EmailVerificationToken;
+import song.devlog1.exception.already.AlreadyExistsEmailException;
+import song.devlog1.exception.already.AlreadyVerifiedTokenException;
 import song.devlog1.exception.notfound.EmailVerificationTokenNotFoundException;
 import song.devlog1.repository.EmailVerificationJpaRepository;
 
@@ -32,6 +34,12 @@ class EmailVerificationServiceTest {
         EmailVerificationToken emailVerificationToken = emailVerificationRepository.findByEmail("dkclasltmf@naver.com").get();
 
         assertThat(emailVerificationToken.getToken()).isEqualTo(token);
+    }
+
+    @Test
+    void create2() {
+        assertThatThrownBy(() -> emailVerificationService.createEmailVerificationToken("dkclasltmf22@naver.com"))
+                .isInstanceOf(AlreadyExistsEmailException.class);
     }
 
     @Test
