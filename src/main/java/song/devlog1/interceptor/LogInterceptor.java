@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -23,6 +22,7 @@ public class LogInterceptor implements HandlerInterceptor {
         if (ipAddress.indexOf(':') >= 0) {
             ipAddress = ipAddress.split(":")[3];
         }
+
         String requestURI = request.getRequestURI();
 
         String name = null;
@@ -31,7 +31,9 @@ public class LogInterceptor implements HandlerInterceptor {
             name = authentication.getName();
         }
 
-        log.info("[Log Interceptor] ipAddress = {}, uri = {}, username = {}", ipAddress, requestURI, name);
+        String method = request.getMethod();
+
+        log.info("[Log Interceptor] ipAddress = {}, uri = {}, username = {}, method = {}", ipAddress, requestURI, name, method);
 
         return true;
     }
