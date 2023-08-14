@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class OAuthController {
 
-    @GetMapping("/oauth/naver")
+//    @GetMapping("/oauth/naver")
     public String oAuth() {
 
         return "redirect:/oauth2/authorization/naver";
