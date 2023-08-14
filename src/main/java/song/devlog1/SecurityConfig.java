@@ -63,22 +63,22 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .permitAll())
-                .oauth2Login(oauth2 -> oauth2
-                        .clientRegistrationRepository(new InMemoryClientRegistrationRepository())
-                        .authorizationEndpoint(authorizationendpoint->authorizationendpoint
-                                .baseUri("https://nid.naver.com/oauth2.0/authorize"))
-                        .redirectionEndpoint(redirectEndpoint->redirectEndpoint
-                                .baseUri("/login/oauth2/{registrationId}"))
-                        .loginPage("/oauth2/authorization/naver")
-                        .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/oauth2/authorize"))
-                        .redirectionEndpoint(redirectEndpoint -> redirectEndpoint
-                                .baseUri("/oauth2/callback/*"))
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(naverOAuth2UserService))
-                        .authorizedClientRepository()
-                        .successHandler(null)
-                        .failureHandler(null))
+//                .oauth2Login(oauth2 -> oauth2
+//                        .clientRegistrationRepository(new InMemoryClientRegistrationRepository())
+//                        .authorizationEndpoint(authorizationendpoint->authorizationendpoint
+//                                .baseUri("https://nid.naver.com/oauth2.0/authorize"))
+//                        .redirectionEndpoint(redirectEndpoint->redirectEndpoint
+//                                .baseUri("/login/oauth2/{registrationId}"))
+//                        .loginPage("/oauth2/authorization/naver")
+//                        .authorizationEndpoint(authorization -> authorization
+//                                .baseUri("/oauth2/authorize"))
+//                        .redirectionEndpoint(redirectEndpoint -> redirectEndpoint
+//                                .baseUri("/oauth2/callback/*"))
+//                        .userInfoEndpoint(userInfo -> userInfo
+//                                .userService(naverOAuth2UserService))
+//                        .authorizedClientRepository()
+//                        .successHandler(null)
+//                        .failureHandler(null))
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
