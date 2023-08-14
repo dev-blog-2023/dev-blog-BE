@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final LoginFailureHandler loginFailureHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationHandler authenticationHandler;
-    private final NaverOAuth2UserService naverOAuth2UserService;
+//    private final NaverOAuth2UserService naverOAuth2UserService;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
