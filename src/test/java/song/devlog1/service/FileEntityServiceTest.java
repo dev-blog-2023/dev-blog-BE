@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.dto.UploadFileDto;
 import song.devlog1.entity.FileEntity;
 import song.devlog1.repository.FileEntityJpaRepository;
@@ -31,6 +32,7 @@ class FileEntityServiceTest {
     FileService fileService;
 
     @Test
+    @Transactional
     void save1() throws IOException {
         String content = "Test Content";
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
@@ -56,6 +58,7 @@ class FileEntityServiceTest {
     }
 
     @Test
+    @Transactional
     void attach1() throws IOException {
         Long boardId = 1L;
         MockMultipartFile testMockMultipartJpg = new MockMultipartFile(

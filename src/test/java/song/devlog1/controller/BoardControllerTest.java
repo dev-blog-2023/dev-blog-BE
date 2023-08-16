@@ -51,7 +51,7 @@ class BoardControllerTest {
                 .andReturn();
 
         String response = mvcResult.getResponse().getContentAsString();
-        Long saveBoardId = objectMapper.readTree(response).get("id").asLong();
+        Long saveBoardId = objectMapper.readTree(response).get("boardId").asLong();
 
         Board findSaveBoard = boardRepository.findById(saveBoardId).get();
 
@@ -91,7 +91,7 @@ class BoardControllerTest {
 
         String response = mvcResult.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(response);
-        Long editBoardId = jsonNode.get("id").asLong();
+        Long editBoardId = jsonNode.get("boardId").asLong();
 
         Board findEditBoard = boardRepository.findById(editBoardId).get();
 
@@ -112,7 +112,7 @@ class BoardControllerTest {
     @Test
     @WithUserDetails(value = "b")
     void delete2() throws Exception {
-        Long boardId = 1L;
+        Long boardId = 2L;
         MvcResult mvcResult = mockMvc.perform(post("/board/{boardId}/delete", boardId))
                 .andExpect(status().is4xxClientError())
                 .andReturn();

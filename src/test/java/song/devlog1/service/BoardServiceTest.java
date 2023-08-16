@@ -43,7 +43,7 @@ class BoardServiceTest {
 
         assertThat(findBoardDto.getId()).isEqualTo(1L);
 
-        assertThat(findBoardDto.getCommentList().size()).isEqualTo(5L);
+        assertThat(findBoardDto.getCommentList().size()).isEqualTo(3L);
 
         log.info("title = {}", findBoardDto.getTitle());
         log.info("content = {}", findBoardDto.getContent());

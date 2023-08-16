@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.dto.SignupDto;
 import song.devlog1.entity.User;
 import song.devlog1.exception.already.AlreadyExistsUsernameException;
@@ -61,6 +62,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void resetPassword1() {
         String username = "a";
         String newPassword = "newPassword";
@@ -72,6 +74,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void editEmail1() {
         Long userId = 1L;
         String newEmail = "dkclasltmf@naver.com";
@@ -84,6 +87,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void editPassword1() {
         Long userId = 1L;
         String origPassword = "a";
@@ -96,6 +100,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void editPassword2() {
         Long userId = 1L;
         String origPassword = "a";
@@ -111,6 +116,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void editUsername1() {
         Long userId = 1L;
         String newUsername = "newUsername";
@@ -123,6 +129,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void editUsername2() {
         Long userId = 1L;
         String saveUsername = "a";
@@ -132,6 +139,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Transactional
     void validUsername1() {
         String alreadyUsername = "a";
         assertThatThrownBy(() -> userService.validUsername(alreadyUsername))

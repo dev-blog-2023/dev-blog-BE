@@ -32,7 +32,7 @@ public class EmailVerificationService {
         Optional<EmailVerificationToken> findToken = emailVerificationRepository.findByEmail(email);
         if (findToken.isPresent()) {
             if (findToken.get().isVerified()) {
-                throw new AlreadyVerifiedTokenException("이미 인증된 토큰입니다22.");
+                throw new AlreadyVerifiedTokenException("이미 인증된 토큰입니다.");
             }
             EmailVerificationToken token = findToken.get();
             token.setToken(getUUIDToken());

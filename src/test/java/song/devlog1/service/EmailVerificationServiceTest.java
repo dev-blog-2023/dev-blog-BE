@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.entity.EmailVerificationToken;
 import song.devlog1.exception.already.AlreadyExistsEmailException;
 import song.devlog1.exception.already.AlreadyVerifiedTokenException;
@@ -28,6 +29,7 @@ class EmailVerificationServiceTest {
     EntityManager em;
 
     @Test
+    @Transactional
     void create1() {
         String token = emailVerificationService.createEmailVerificationToken("dkclasltmf@naver.com");
 
@@ -37,12 +39,14 @@ class EmailVerificationServiceTest {
     }
 
     @Test
+    @Transactional
     void create2() {
         assertThatThrownBy(() -> emailVerificationService.createEmailVerificationToken("dkclasltmf22@naver.com"))
                 .isInstanceOf(AlreadyExistsEmailException.class);
     }
 
     @Test
+    @Transactional
     void verify1() {
         String token = emailVerificationService.createEmailVerificationToken("dkclasltmf@naver.com");
 
@@ -54,6 +58,7 @@ class EmailVerificationServiceTest {
     }
 
     @Test
+    @Transactional
     void verify2() {
         String token = emailVerificationService.createEmailVerificationToken("dkclasltmf@naver.com");
 
@@ -63,6 +68,7 @@ class EmailVerificationServiceTest {
     }
 
     @Test
+    @Transactional
     void delete1() {
         String token = emailVerificationService.createEmailVerificationToken("dkclasltmf@naver.com");
 
