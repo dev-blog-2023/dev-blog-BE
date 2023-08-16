@@ -1,5 +1,6 @@
 package song.devlog1.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class HomeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    public void postSignup(@RequestBody SignupDto signupDto) {
+    public void postSignup(@Valid @RequestBody SignupDto signupDto) {
         Long id = userService.saveUser(signupDto);
     }
 

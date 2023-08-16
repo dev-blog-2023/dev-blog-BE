@@ -2,20 +2,29 @@ package song.devlog1;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import song.devlog1.security.authentication.AuthenticationHandler;
-import song.devlog1.security.authentication.JwtAuthenticationFilter;
-import song.devlog1.security.authentication.LoginFailureHandler;
-import song.devlog1.security.authentication.LoginSuccessHandler;
+import song.devlog1.security.authentication.*;
 import song.devlog1.entity.role.RoleName;
 import song.devlog1.security.oauth2.NaverOAuth2UserService;
 
@@ -32,10 +41,16 @@ public class SecurityConfig {
     private final LoginFailureHandler loginFailureHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationHandler authenticationHandler;
-//    private final NaverOAuth2UserService naverOAuth2UserService;
+    private final NaverOAuth2UserService naverOAuth2UserService;
+
+    private final String NAVER = "naver";
+//    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+//    private String client_id;
+//    @Value("${spring.security.oauth2.client.registration.naver.client-secrete}")
+//    private String client_secrete;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public static BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -63,24 +78,25 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .permitAll())
+//                .oauth2Login(withDefaults())
 //                .oauth2Login(oauth2 -> oauth2
-//                        .clientRegistrationRepository(new InMemoryClientRegistrationRepository())
+//                        .loginPage("/login/oauth2")
 //                        .authorizationEndpoint(authorizationendpoint->authorizationendpoint
 //                                .baseUri("https://nid.naver.com/oauth2.0/authorize"))
 //                        .redirectionEndpoint(redirectEndpoint->redirectEndpoint
-//                                .baseUri("/login/oauth2/{registrationId}"))
-//                        .loginPage("/oauth2/authorization/naver")
+//                                .baseUri("/login/oauth2/naver"))
 //                        .authorizationEndpoint(authorization -> authorization
 //                                .baseUri("/oauth2/authorize"))
-//                        .redirectionEndpoint(redirectEndpoint -> redirectEndpoint
-//                                .baseUri("/oauth2/callback/*"))
 //                        .userInfoEndpoint(userInfo -> userInfo
 //                                .userService(naverOAuth2UserService))
+//                        .clientRegistrationRepository(new InMemoryClientRegistrationRepository())
 //                        .authorizedClientRepository()
 //                        .successHandler(null)
 //                        .failureHandler(null))
+//                )
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

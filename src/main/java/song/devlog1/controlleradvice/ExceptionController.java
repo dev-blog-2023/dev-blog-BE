@@ -3,6 +3,7 @@ package song.devlog1.controlleradvice;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -18,6 +19,7 @@ import song.devlog1.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -25,6 +27,8 @@ import static org.springframework.http.HttpStatus.*;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class ExceptionController {
+
+    private final MessageSource messageSource;
 
     @ExceptionHandler(value = {AlreadyException.class, InvalidException.class, NotFoundException.class})
     public ResponseEntity<ResponseException> mvcExceptionHandler(Exception e,
@@ -69,7 +73,7 @@ public class ExceptionController {
     private HttpStatus getHttpStatus(Exception e) {
         if (e instanceof NotFoundException) {
             return NOT_FOUND;
-        } else if (e instanceof AlreadyException || e instanceof InvalidException) {
+        } else if (e instanceof AlreadyException || e instanceof InvalidException || e instanceof MethodArgumentNotValidException) {
             return BAD_REQUEST;
         }
         return INTERNAL_SERVER_ERROR;
@@ -81,8 +85,11 @@ public class ExceptionController {
         if (e instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException argumentNotValidException = (MethodArgumentNotValidException) e;
             argumentNotValidException.getBindingResult().getAllErrors().forEach(error->{
-                String field = ((FieldError) error).getField();
-                String message = error.getDefaultMessage();
+                FieldError fieldError = (FieldError) error;
+                String field = fieldError.getField();
+                String fieldClassName = fieldError.getObjectName();
+                String messageKey = fieldError.getCode() + "." + fieldClassName + "." + fieldError.getField();
+                String message = messageSource.getMessage(messageKey, null, fieldError.getDefaultMessage(), Locale.getDefault());
                 ExceptionDto exceptionDto = new ExceptionDto(field, message);
                 messages.add(exceptionDto);
             });
