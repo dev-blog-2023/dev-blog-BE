@@ -235,4 +235,18 @@ class HomeControllerTest {
         assertThat(passwordEncoder.matches(resetPasswordDto.getNewPassword(), findUser.getPassword()))
                 .isTrue();
     }
+
+    @Test
+    void cors1() throws Exception {
+        VerifyEmailDto verifyEmailDto = new VerifyEmailDto();
+        verifyEmailDto.setEmail("dkclasltmf@naver.com");
+        String requestJson = objectMapper.writeValueAsString(verifyEmailDto);
+
+        mockMvc.perform(post("/verifyEmail")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .header("Origin", "http://localhost:3030"))
+                .andExpect(status().isOk())
+                .andExpect(header().exists("Access-Control-Allow-Origin"));
+    }
 }

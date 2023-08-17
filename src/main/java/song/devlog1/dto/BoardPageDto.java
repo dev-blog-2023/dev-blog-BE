@@ -1,5 +1,6 @@
 package song.devlog1.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import song.devlog1.entity.Board;
