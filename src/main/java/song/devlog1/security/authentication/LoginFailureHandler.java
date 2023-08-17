@@ -30,7 +30,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info("username = {}, password = {}", request.getParameter("username"), request.getParameter("password"));
+        log.info("login fail, username = {}, password = {}", request.getParameter("username"), request.getParameter("password"));
 
         HttpStatus status;
         String message;
@@ -66,6 +66,8 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         String exceptionJson = objectMapper.writeValueAsString(responseException);
 
         response.setStatus(status.value());
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(exceptionJson);
