@@ -23,6 +23,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         jsonObject.put("token", jwtToken);
 
         response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(jsonObject.toString());
