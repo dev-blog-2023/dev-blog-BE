@@ -14,7 +14,7 @@ import song.devlog1.service.CommentService;
 @Slf4j
 @RestController
 @RequestMapping("/comment")
-@CrossOrigin(origins = "http://localhost:8080",allowedHeaders = "*")
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class CommentController {
 

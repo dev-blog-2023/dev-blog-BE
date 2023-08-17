@@ -13,7 +13,6 @@ import song.devlog1.dto.BoardDto;
 import song.devlog1.dto.BoardResponseDto;
 import song.devlog1.dto.EditBoardDto;
 import song.devlog1.dto.SaveBoardDto;
-import song.devlog1.entity.Board;
 import song.devlog1.security.userdetails.UserDetailsImpl;
 import song.devlog1.service.BoardService;
 import song.devlog1.service.FileEntityService;
@@ -25,7 +24,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/board")
-@CrossOrigin(origins = "http://localhost:8080",allowedHeaders = "*")
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class BoardController {
 
