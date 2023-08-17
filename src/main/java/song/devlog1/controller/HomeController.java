@@ -16,7 +16,7 @@ import song.devlog1.service.*;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8080",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class HomeController {
 

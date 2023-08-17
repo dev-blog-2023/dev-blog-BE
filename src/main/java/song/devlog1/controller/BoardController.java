@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/board")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8080",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class BoardController {
 

@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 @Slf4j
 @Controller
 @RequestMapping("/file")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8080",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class FileController {
 
