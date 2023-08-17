@@ -16,7 +16,6 @@ import song.devlog1.service.*;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class HomeController {
 
@@ -42,13 +41,13 @@ public class HomeController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verifyUsername")
-    public void postVerifyUsername(@RequestBody VerifyUsernameDto verifyUsernameDto) {
+    public void postVerifyUsername(@Valid @RequestBody VerifyUsernameDto verifyUsernameDto) {
         userService.validUsername(verifyUsernameDto.getUsername());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verifyEmail")
-    public void postVerifyEmail(@RequestBody VerifyEmailDto verifyEmailDto) {
+    public void postVerifyEmail(@Valid @RequestBody VerifyEmailDto verifyEmailDto) {
         String token = emailVerificationService.createEmailVerificationToken(verifyEmailDto.getEmail());
         emailService.sendMail(verifyEmailDto.getEmail(), "email verification", "token: " + token);
     }
@@ -56,14 +55,14 @@ public class HomeController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verifyEmail/{token}")
     public void postVerifyEmailToken(@PathVariable(value = "token") String token,
-                                     @RequestBody VerifyEmailDto verifyEmailDto) {
+                                     @Valid @RequestBody VerifyEmailDto verifyEmailDto) {
         Long id = emailVerificationService.verifyEmailVerificationToken(verifyEmailDto.getEmail(), token);
         emailVerificationService.deleteEmailVerificationToken(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/findUsername")
-    public String postFindUsername(@RequestBody FindUsernameDto findUsernameDto) {
+    public String postFindUsername(@Valid @RequestBody FindUsernameDto findUsernameDto) {
         String username = userService.findUsername(findUsernameDto.getName(), findUsernameDto.getEmail());
 
         JSONObject jsonObject = new JSONObject();
@@ -74,7 +73,7 @@ public class HomeController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/findPassword")
-    public void postFindPassword(@RequestBody FindPasswordDto findPasswordDto) {
+    public void postFindPassword(@Valid @RequestBody FindPasswordDto findPasswordDto) {
         String username = userService.findPassword(findPasswordDto.getUsername(),
                 findPasswordDto.getName(), findPasswordDto.getEmail());
 
@@ -92,7 +91,7 @@ public class HomeController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/resetPassword/{token}")
     public void postResetPassword(@PathVariable(value = "token") String token,
-                                  @RequestBody ResetPasswordDto resetPasswordDto) {
+                                  @Valid @RequestBody ResetPasswordDto resetPasswordDto) {
         String username = resetPasswordTokenService.verifyResetPasswordToken(token);
 
         Long id = userService.resetPassword(username, resetPasswordDto.getNewPassword());

@@ -24,7 +24,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/board")
-@CrossOrigin(origins = "*",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class BoardController {
 
