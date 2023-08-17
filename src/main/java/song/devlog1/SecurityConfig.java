@@ -68,12 +68,6 @@ public class SecurityConfig {
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
 
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://{aws주소}:8080",
-                "http://localhost:3000",
-                "https://localhost:3000",
-                "https://127.0.0.1:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
