@@ -15,6 +15,7 @@ import song.devlog1.service.UserService;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserController {
 
