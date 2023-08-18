@@ -30,6 +30,10 @@ public class UserService {
     public Long saveUser(SignupDto signupDto) {
         User user = signupDto.toEntity();
         user.setPassword(passwordEncoder.encode(signupDto.getPassword()));
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
 
         User saveUser = userRepository.save(user);
         return saveUser.getId();

@@ -35,6 +35,8 @@ public class AuthenticationHandler implements AuthenticationEntryPoint {
         String exceptionJson = objectMapper.writeValueAsString(responseException);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(exceptionJson);

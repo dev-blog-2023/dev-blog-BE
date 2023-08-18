@@ -8,14 +8,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import song.devlog1.security.CustomFilter;
+import song.devlog1.repository.UserJpaRepository;
+import song.devlog1.security.filter.LogFilter;
 import song.devlog1.security.authentication.*;
 import song.devlog1.entity.role.RoleName;
 import song.devlog1.security.oauth2.NaverOAuth2UserService;
+import song.devlog1.security.userdetails.UserDetailsServiceImpl;
 
 import static org.springframework.security.web.util.matcher.RegexRequestMatcher.regexMatcher;
 
@@ -25,9 +28,9 @@ import static org.springframework.security.web.util.matcher.RegexRequestMatcher.
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final UserJpaRepository userRepository;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationHandler authenticationHandler;
     private final NaverOAuth2UserService naverOAuth2UserService;
 
@@ -84,10 +87,15 @@ public class SecurityConfig {
 //                        .successHandler(null)
 //                        .failureHandler(null))
 //                )
-                .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CustomFilter(), ChannelProcessingFilter.class);
+                .addFilterAfter(new JwtAuthenticationFilter(userDetailsService(userRepository)), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LogFilter(), ChannelProcessingFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserJpaRepository userRepository) {
+        return new UserDetailsServiceImpl(userRepository);
     }
 
 }

@@ -8,13 +8,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.devlog1.entity.User;
-import song.devlog1.exception.notfound.UserNotFoundException;
 import song.devlog1.repository.UserJpaRepository;
 
 import java.util.Optional;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
