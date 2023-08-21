@@ -1,4 +1,4 @@
-package song.devlog1.security.authentication;
+package song.devlog1.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -14,7 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
+import song.devlog1.exception.JwtProcessException;
 
 import java.io.IOException;
 
@@ -25,6 +27,7 @@ import static song.devlog1.security.authentication.jwt.JwtKey.*;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
+    private final AuthenticationEntryPoint authenticationHandler;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
@@ -39,9 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = getAuthentication(token);
             if (authentication != null) {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("[Jwt Filter] set context");
             }
         } catch (Exception e) {
-            throw e;
+            authenticationHandler.commence(request, response, new JwtProcessException(e.getMessage(), e));
+            return;
+//            throw e;
         }
 
         filterChain.doFilter(request, response);

@@ -13,6 +13,9 @@ import song.devlog1.dto.UploadFileDto;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,8 +28,14 @@ class FileServiceTest {
     @Autowired
     FileService fileService;
 
-    @Value("${upload.path}")
+    @Value(value = "${upload.path}")
     String path;
+
+    @Value(value = "${upload.springPng}")
+    String springPng;
+
+    @Value(value = "${upload.securityPng}")
+    String securityPng;
 
 
     @Test
@@ -59,5 +68,13 @@ class FileServiceTest {
 
         File file = new File(path + uploadFileDto.getFileName());
         assertThat(file.exists()).isFalse();
+    }
+
+    @Test
+    void find1() {
+        File file = new File(springPng);
+        if (file.exists()) {
+            log.info(file.getName());
+        }
     }
 }

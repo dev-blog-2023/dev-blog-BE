@@ -95,6 +95,7 @@ public class HomeController {
         String username = resetPasswordTokenService.verifyResetPasswordToken(token);
 
         Long id = userService.resetPassword(username, resetPasswordDto.getNewPassword());
+        resetPasswordTokenService.deleteResetPasswordToken(token);
     }
 
     @ResponseStatus(HttpStatus.OK)

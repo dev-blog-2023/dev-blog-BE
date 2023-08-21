@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import song.devlog1.dto.ExceptionDto;
 import song.devlog1.dto.ResponseException;
 
@@ -18,12 +18,12 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AuthenticationHandler implements AuthenticationEntryPoint {
+public class AuthorizationHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
@@ -37,7 +37,7 @@ public class AuthenticationHandler implements AuthenticationEntryPoint {
 
         log.info("[Authentication Fail] ipAddress = {}, origin = {}, uri = {}, method = {}", ipAddress, origin, requestURI, method);
 
-        ExceptionDto exceptionDto = new ExceptionDto(authException.getMessage());
+        ExceptionDto exceptionDto = new ExceptionDto(accessDeniedException.getMessage());
         List<ExceptionDto> messages = new ArrayList<>();
         messages.add(exceptionDto);
 

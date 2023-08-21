@@ -52,7 +52,7 @@ class UserServiceTest {
 
     @Test
     void findUsername1() {
-        String name = "a";
+        String name = "홍길동";
         String email = "dkclasltmf22@naver.com";
         String findUsername = userService.findUsername(name, email);
 
@@ -64,7 +64,7 @@ class UserServiceTest {
     @Test
     @Transactional
     void resetPassword1() {
-        String username = "a";
+        String username = "userA";
         String newPassword = "newPassword";
         Long id = userService.resetPassword(username, newPassword);
 
@@ -90,7 +90,7 @@ class UserServiceTest {
     @Transactional
     void editPassword1() {
         Long userId = 1L;
-        String origPassword = "a";
+        String origPassword = "1234";
         String newPassword = "newPassword";
         Long id = userService.editPassword(userId, origPassword, newPassword);
 
@@ -103,9 +103,9 @@ class UserServiceTest {
     @Transactional
     void editPassword2() {
         Long userId = 1L;
-        String origPassword = "a";
-        String newSamePassword = "a";
-        String failOrigPassword = "abc";
+        String origPassword = "1234";
+        String newSamePassword = "1234";
+        String failOrigPassword = "xxx";
         String newPassword = "newPassword";
 
         assertThatThrownBy(() -> userService.editPassword(userId, origPassword, newSamePassword))
@@ -132,7 +132,7 @@ class UserServiceTest {
     @Transactional
     void editUsername2() {
         Long userId = 1L;
-        String saveUsername = "a";
+        String saveUsername = "userA";
 
         assertThatThrownBy(() -> userService.editUsername(userId, saveUsername))
                 .isInstanceOf(AlreadyExistsUsernameException.class);
@@ -141,7 +141,7 @@ class UserServiceTest {
     @Test
     @Transactional
     void validUsername1() {
-        String alreadyUsername = "a";
+        String alreadyUsername = "userA";
         assertThatThrownBy(() -> userService.validUsername(alreadyUsername))
                 .isInstanceOf(AlreadyExistsUsernameException.class);
     }

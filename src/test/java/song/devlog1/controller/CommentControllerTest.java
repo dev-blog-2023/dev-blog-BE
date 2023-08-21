@@ -52,7 +52,7 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void postSave1() throws Exception {
         Long boardId = 1L;
         SaveCommentDto saveCommentDto = new SaveCommentDto();
@@ -79,7 +79,7 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void postEdit1() throws Exception {
         Long commentId = 1L;
         Long boardId = 1L;
@@ -105,7 +105,7 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void postDelete1() throws Exception {
         Long commentId = 1L;
 

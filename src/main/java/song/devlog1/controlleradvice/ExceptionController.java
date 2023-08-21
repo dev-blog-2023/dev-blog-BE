@@ -60,7 +60,7 @@ public class ExceptionController {
         return new ResponseEntity<>(responseException, status);
     }
 
-    @ExceptionHandler(value = Exception.class)
+//    @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ResponseException> exceptionHandler(Exception e,
                                                               HttpServletRequest request) {
         HttpStatus status = getHttpStatus(e);

@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import song.devlog1.security.authentication.jwt.JwtUtils;
+import song.devlog1.security.userdetails.UserDetailsImpl;
+import song.devlog1.security.userdetails.UserDetailsServiceImpl;
 
 import java.io.IOException;
 
@@ -17,7 +19,8 @@ import java.io.IOException;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("login success, name = {}", authentication.getName());
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        log.info("login success, userName = {}", userDetails.getUsername());
         String jwtToken = JwtUtils.generateJwtToken(authentication);
 
         JSONObject jsonObject = new JSONObject();
@@ -29,6 +32,5 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(jsonObject.toString());
-
     }
 }

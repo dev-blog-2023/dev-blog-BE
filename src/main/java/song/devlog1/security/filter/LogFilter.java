@@ -2,28 +2,26 @@ package song.devlog1.security.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
-public class LogFilter extends GenericFilter {
+public class LogFilter extends OncePerRequestFilter {
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        String ipAddress = httpRequest.getHeader("X-Forwarded-For");
+        String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null) {
-            ipAddress = httpRequest.getRemoteAddr();
+            ipAddress = request.getRemoteAddr();
         }
         if (ipAddress.indexOf(':') >= 0) {
             ipAddress = ipAddress.split(":")[3];
         }
-
-        String requestURI = httpRequest.getRequestURI();
 
         String name = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -31,11 +29,12 @@ public class LogFilter extends GenericFilter {
             name = authentication.getName();
         }
 
-        String method = httpRequest.getMethod();
-        String origin = httpRequest.getHeader("Origin");
+        String origin = request.getHeader("Origin");
+        String requestURI = request.getRequestURI();
+        String method = request.getMethod();
 
-        log.info("[Log Filter] ipAddress = {}, origin = {}, uri = {}, username = {}, method = {}", ipAddress, origin, requestURI, name, method);
+        log.info("[Log Filter] ipAddress = {}, origin = {}, name = {}, uri = {}, method = {}", ipAddress, origin, name, requestURI, method);
 
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }

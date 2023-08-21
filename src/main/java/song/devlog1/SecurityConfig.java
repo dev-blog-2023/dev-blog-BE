@@ -1,5 +1,6 @@
 package song.devlog1;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -8,12 +9,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import song.devlog1.repository.UserJpaRepository;
+import song.devlog1.security.filter.JwtAuthenticationFilter;
 import song.devlog1.security.filter.LogFilter;
 import song.devlog1.security.authentication.*;
 import song.devlog1.entity.role.RoleName;
@@ -31,7 +35,7 @@ public class SecurityConfig {
     private final UserJpaRepository userRepository;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
-    private final AuthenticationHandler authenticationHandler;
+    private final ObjectMapper objectMapper;
     private final NaverOAuth2UserService naverOAuth2UserService;
 
     private final String NAVER = "naver";
@@ -64,9 +68,12 @@ public class SecurityConfig {
                         .passwordParameter("password")
                         .successHandler(loginSuccessHandler)
                         .failureHandler(loginFailureHandler))
-                .exceptionHandling(exceptionHandling -> {
-                    exceptionHandling.authenticationEntryPoint(authenticationHandler);
-                })
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(authenticationEntryPoint(objectMapper))
+                        .accessDeniedHandler(accessDeniedHandler(objectMapper))
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
@@ -87,8 +94,8 @@ public class SecurityConfig {
 //                        .successHandler(null)
 //                        .failureHandler(null))
 //                )
-                .addFilterAfter(new JwtAuthenticationFilter(userDetailsService(userRepository)), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new LogFilter(), ChannelProcessingFilter.class);
+                .addFilterAfter(new JwtAuthenticationFilter(userDetailsService(userRepository), authenticationEntryPoint(objectMapper)), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new LogFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }
@@ -96,6 +103,16 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserJpaRepository userRepository) {
         return new UserDetailsServiceImpl(userRepository);
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
+        return new AuthenticationHandler(objectMapper);
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
+        return new AuthorizationHandler(objectMapper);
     }
 
 }

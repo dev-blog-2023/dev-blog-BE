@@ -37,7 +37,7 @@ class BoardControllerTest {
     BoardJpaRepository boardRepository;
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void save1() throws Exception {
         SaveBoardDto saveBoardDto = new SaveBoardDto();
         saveBoardDto.setTitle("Test Title");
@@ -74,7 +74,7 @@ class BoardControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void edit1() throws Exception {
         Long boardId = 1L;
 
@@ -99,7 +99,7 @@ class BoardControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void delete1() throws Exception {
         Long boardId = 1L;
         mockMvc.perform(post("/board/{boardId}/delete", boardId))
@@ -110,7 +110,7 @@ class BoardControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "b")
+    @WithUserDetails(value = "userB")
     void delete2() throws Exception {
         Long boardId = 2L;
         MvcResult mvcResult = mockMvc.perform(post("/board/{boardId}/delete", boardId))

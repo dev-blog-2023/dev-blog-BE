@@ -111,7 +111,7 @@ class HomeControllerTest {
     @Test
     void verifyUsername2() throws Exception {
         VerifyUsernameDto AlreadyUsernameDto = new VerifyUsernameDto();
-        AlreadyUsernameDto.setUsername("a");
+        AlreadyUsernameDto.setUsername("userA");
         String requestJson = objectMapper.writeValueAsString(AlreadyUsernameDto);
 
         mockMvc.perform(post("/verifyUsername")
@@ -181,7 +181,7 @@ class HomeControllerTest {
     @Test
     void findUsername1() throws Exception {
         FindUsernameDto findUsernameDto = new FindUsernameDto();
-        findUsernameDto.setName("a");
+        findUsernameDto.setName("홍길동");
         findUsernameDto.setEmail("dkclasltmf22@naver.com");
         String requestJson = objectMapper.writeValueAsString(findUsernameDto);
 
@@ -204,8 +204,8 @@ class HomeControllerTest {
          * post find password
          */
         FindPasswordDto findPasswordDto = new FindPasswordDto();
-        findPasswordDto.setUsername("a");
-        findPasswordDto.setName("a");
+        findPasswordDto.setUsername("userA");
+        findPasswordDto.setName("홍길동");
         findPasswordDto.setEmail("dkclasltmf22@naver.com");
         String requestJson = objectMapper.writeValueAsString(findPasswordDto);
 

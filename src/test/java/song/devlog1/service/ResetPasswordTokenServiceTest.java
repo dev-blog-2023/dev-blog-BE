@@ -22,7 +22,7 @@ class ResetPasswordTokenServiceTest {
 
     @Test
     void save1() {
-        String username = "a";
+        String username = "userA";
 
         String token = resetPasswordTokenService.saveResetPasswordToken(username);
 
@@ -33,7 +33,7 @@ class ResetPasswordTokenServiceTest {
 
     @Test
     void verify1() {
-        String username = "a";
+        String username = "userA";
 
         String token = resetPasswordTokenService.saveResetPasswordToken(username);
 

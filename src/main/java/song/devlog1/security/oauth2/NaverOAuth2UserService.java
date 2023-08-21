@@ -20,7 +20,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class NaverOAuth2UserService extends DefaultOAuth2UserService {
-//public class NaverOAuth2UserService {
 
     private final UserJpaRepository userRepository;
 

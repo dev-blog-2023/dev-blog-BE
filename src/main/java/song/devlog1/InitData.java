@@ -3,6 +3,7 @@ package song.devlog1;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import song.devlog1.repository.BoardJpaRepository;
 import song.devlog1.repository.CommentJpaRepository;
 import song.devlog1.repository.RoleJpaRepository;
 import song.devlog1.repository.UserJpaRepository;
+import song.devlog1.service.FileService;
 import song.devlog1.service.UserRoleService;
 
 @Slf4j
@@ -40,12 +42,19 @@ public class InitData {
         private final BoardJpaRepository boardRepository;
         private final CommentJpaRepository commentRepository;
         private final UserRoleService userRoleService;
+        private final FileService fileService;
+
+        @Value(value = "${upload.springPng}")
+        String springPng;
+
+        @Value(value = "${upload.securityPng}")
+        String securityPng;
 
         public void init1() {
             User userA = new User();
-            userA.setUsername("a");
-            userA.setPassword(passwordEncoder.encode("a"));
-            userA.setName("a");
+            userA.setUsername("userA");
+            userA.setPassword(passwordEncoder.encode("1234"));
+            userA.setName("홍길동");
             userA.setEmail("dkclasltmf22@naver.com");
             userA.setEnabled(true);
             userA.setAccountNonExpired(true);
@@ -63,23 +72,51 @@ public class InitData {
             userRoleService.grantRole(saveUserA.getId(), roleAdmin.getRoleName());
 
             User userB = new User();
-            userB.setUsername("b");
-            userB.setPassword(passwordEncoder.encode("b"));
-            userB.setName("b");
+            userB.setUsername("userB");
+            userB.setPassword(passwordEncoder.encode("1234"));
+            userB.setName("김아무");
             userB.setEmail("");
             userB.setEnabled(true);
             userB.setAccountNonExpired(true);
             userB.setAccountNonLocked(true);
             userB.setCredentialsNonExpired(true);
             User saveUserB = userRepository.save(userB);
-
             userRoleService.grantRole(saveUserB.getId(), roleUser.getRoleName());
 
+            User usera = new User();
+            usera.setUsername("a");
+            usera.setPassword(passwordEncoder.encode("a"));
+            usera.setName("aName");
+            usera.setEmail("");
+            usera.setEnabled(true);
+            usera.setAccountNonExpired(true);
+            usera.setAccountNonLocked(true);
+            usera.setCredentialsNonExpired(true);
+            User saveUsera = userRepository.save(usera);
+            userRoleService.grantRole(saveUsera.getId(), roleUser.getRoleName());
+
+            User userMiran = new User();
+            userMiran.setUsername("miran");
+            userMiran.setPassword(passwordEncoder.encode("1234"));
+            userMiran.setName("미란");
+            userMiran.setEmail("");
+            userMiran.setEnabled(true);
+            userMiran.setAccountNonExpired(true);
+            userMiran.setAccountNonLocked(true);
+            userMiran.setCredentialsNonExpired(true);
+            User saveUserMiran = userRepository.save(userMiran);
+            userRoleService.grantRole(saveUserMiran.getId(), roleUser.getRoleName());
 
             for (int i = 0; i < 20; i++) {
                 Board board = new Board();
                 board.setTitle("Title " + i);
                 board.setContent("Content " + i);
+                if (i == 0) {
+                    board.setContent("<p> Hello Spring </p><br> <img src=/file/downloadFile/spring.png>");
+                }
+                if (i == 1) {
+                    board.setContent("<p> Hello Spring Security</p><br> <img src=/file/downloadFile/security.png>");
+                }
                 board.setWriter(userA);
                 boardRepository.save(board);
             }

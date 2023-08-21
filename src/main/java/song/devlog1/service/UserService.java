@@ -52,7 +52,7 @@ public class UserService {
         if (findUser.isEmpty()) {
             throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
         }
-        return findUser.get().getName();
+        return findUser.get().getUsername();
     }
 
     @Transactional

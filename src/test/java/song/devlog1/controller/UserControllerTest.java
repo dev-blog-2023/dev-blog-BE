@@ -57,7 +57,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void findUser1() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get(("/user")))
                 .andExpect(status().isOk())
@@ -68,11 +68,11 @@ class UserControllerTest {
 
         User findUser = userJpaRepository.findById(findUserId).get();
 
-        assertThat(findUser.getUsername()).isEqualTo("a");
+        assertThat(findUser.getUsername()).isEqualTo("userA");
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void editEmail1() throws Exception {
         EditEmailDto editEmailDto = new EditEmailDto();
         editEmailDto.setEmail("TestNewEmail@email.com");
@@ -83,16 +83,16 @@ class UserControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk());
 
-        User findUser = userJpaRepository.findByUsername("a").get();
+        User findUser = userJpaRepository.findByUsername("userA").get();
 
         assertThat(findUser.getEmail()).isEqualTo(editEmailDto.getEmail());
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void editPassword1() throws Exception {
         EditPasswordDto editPasswordDto = new EditPasswordDto();
-        editPasswordDto.setOriginalPassword("a");
+        editPasswordDto.setOriginalPassword("1234");
         editPasswordDto.setNewPassword("testNewPassword");
         String requestJson = objectMapper.writeValueAsString(editPasswordDto);
 
@@ -101,14 +101,14 @@ class UserControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk());
 
-        User findUser = userJpaRepository.findByUsername("a").get();
+        User findUser = userJpaRepository.findByUsername("userA").get();
 
         assertThat(passwordEncoder.matches(editPasswordDto.getNewPassword(), findUser.getPassword()))
                 .isTrue();
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void editUsername1() throws Exception {
         EditUsernameDto editUsernameDto = new EditUsernameDto();
         editUsernameDto.setUsername("testNewUsername");
@@ -119,13 +119,13 @@ class UserControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk());
 
-        assertThatThrownBy(() -> userJpaRepository.findByUsername("a").get())
+        assertThatThrownBy(() -> userJpaRepository.findByUsername("userA").get())
                 .isInstanceOf(NoSuchElementException.class);
         assertThat(userJpaRepository.findByUsername(editUsernameDto.getUsername()).get()).isNotNull();
     }
 
     @Test
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void editName1() throws Exception {
         EditNameDto editNameDto = new EditNameDto();
         editNameDto.setName("testNewName");
@@ -136,14 +136,14 @@ class UserControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk());
 
-        User findUser = userJpaRepository.findByUsername("a").get();
+        User findUser = userJpaRepository.findByUsername("userA").get();
 
         assertThat(findUser.getName()).isEqualTo(editNameDto.getName());
     }
 
     @Test
     @Transactional
-    @WithUserDetails(value = "a")
+    @WithUserDetails(value = "userA")
     void delete1() throws Exception {
         mockMvc.perform(post("/user/delete"))
                 .andExpect(status().isOk());

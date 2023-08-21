@@ -37,6 +37,7 @@ public class FileController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @GetMapping(value = "/downloadFile/{fileName}")
     public ResponseEntity<Resource> getFile(@PathVariable(value = "fileName") String fileName) throws MalformedURLException {
         fileService.isExists(fileName);
