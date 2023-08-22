@@ -26,7 +26,7 @@ public class InitData {
 
     private final InitService initService;
 
-    @PostConstruct
+//    @PostConstruct
     public void doInit() {
         initService.init1();
     }
@@ -83,18 +83,6 @@ public class InitData {
             User saveUserB = userRepository.save(userB);
             userRoleService.grantRole(saveUserB.getId(), roleUser.getRoleName());
 
-            User usera = new User();
-            usera.setUsername("a");
-            usera.setPassword(passwordEncoder.encode("a"));
-            usera.setName("aName");
-            usera.setEmail("");
-            usera.setEnabled(true);
-            usera.setAccountNonExpired(true);
-            usera.setAccountNonLocked(true);
-            usera.setCredentialsNonExpired(true);
-            User saveUsera = userRepository.save(usera);
-            userRoleService.grantRole(saveUsera.getId(), roleUser.getRoleName());
-
             User userMiran = new User();
             userMiran.setUsername("miran");
             userMiran.setPassword(passwordEncoder.encode("1234"));
@@ -140,6 +128,8 @@ public class InitData {
                     }
                 }
             }
+
+//            fileService.upload()
         }
     }
 }

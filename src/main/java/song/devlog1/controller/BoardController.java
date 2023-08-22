@@ -34,7 +34,7 @@ public class BoardController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/save")
     public BoardResponseDto postSaveBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                  @RequestBody SaveBoardDto saveBoardDto) {
+                                          @RequestBody SaveBoardDto saveBoardDto) {
         Long boardId = boardService.saveBoard(saveBoardDto, userDetails.getId());
 
         Document jsoupDoc = Jsoup.parse(saveBoardDto.getContent());
@@ -72,8 +72,8 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}/edit")
     public BoardResponseDto postEditBoard(@PathVariable(value = "id") Long boardId,
-                                  @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                  @RequestBody EditBoardDto editBoardDto) {
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                          @RequestBody EditBoardDto editBoardDto) {
         Long id = boardService.editBoard(userDetails.getId(), boardId, editBoardDto);
         String content = editBoardDto.getContent();
 
