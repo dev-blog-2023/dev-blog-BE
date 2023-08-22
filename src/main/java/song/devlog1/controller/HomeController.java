@@ -25,13 +25,13 @@ public class HomeController {
     private final UserService userService;
     private final BoardService boardService;
 
-//    @ResponseStatus(HttpStatus.OK)
-//    @GetMapping("/")
-//    public Page<BoardPageDto> getHome(@PageableDefault(page = 0, size = 10) Pageable pageable) {
-//        Page<BoardPageDto> boardPageDtoPage = boardService.findAll(pageable);
-//
-//        return boardPageDtoPage;
-//    }
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/home")
+    public Page<BoardPageDto> getHome(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<BoardPageDto> boardPageDtoPage = boardService.findAll(pageable);
+
+        return boardPageDtoPage;
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
