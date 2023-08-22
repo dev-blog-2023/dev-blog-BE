@@ -67,7 +67,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
         response.setStatus(status.value());
 //        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        response.setHeader("Access-Control-Allow-Origin", "http://52.79.222.161:3000");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
