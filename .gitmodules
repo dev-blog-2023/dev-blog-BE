@@ -1,0 +1,9 @@
+[submodule "src/webapp/react"]
+	path = src/webapp/react
+	url = https://github.com/dev-blog-2023/dev-blog-FE.git
+[submodule "src/main/webapp/react"]
+	path = src/main/webapp/react
+	url = https://github.com/dev-blog-2023/dev-blog-FE.git
+[submodule "src/main/webapp/reactapp"]
+	path = src/main/webapp/reactapp
+	url = https://github.com/dev-blog-2023/dev-blog-FE.git

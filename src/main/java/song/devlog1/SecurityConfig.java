@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +22,7 @@ import song.devlog1.security.authentication.*;
 import song.devlog1.entity.role.RoleName;
 import song.devlog1.security.oauth2.NaverOAuth2UserService;
 import song.devlog1.security.userdetails.UserDetailsServiceImpl;
+import song.devlog1.security.userdetails.UserDetailsServiceImplInterface;
 
 import static org.springframework.security.web.util.matcher.RegexRequestMatcher.regexMatcher;
 
@@ -57,9 +57,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/login", "logout", "/signup", "/css/**", "/*.ico", "/*.js", "/error").permitAll()
-                        .requestMatchers(regexMatcher("^/board/[0-9]+$")).permitAll()
-                        .requestMatchers("/board/**").authenticated()
+                        .requestMatchers(regexMatcher("^/api/board/[0-9]+$")).permitAll()
+                        .requestMatchers("/api/board/**").authenticated()
                         .requestMatchers("/comment/**").authenticated()
+                        .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasAuthority(RoleName.ROLE_ADMIN.name())
                         .anyRequest().permitAll())
                 .formLogin(formLogin -> formLogin
@@ -101,7 +102,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserJpaRepository userRepository) {
+    public UserDetailsServiceImplInterface userDetailsService(UserJpaRepository userRepository) {
         return new UserDetailsServiceImpl(userRepository);
     }
 

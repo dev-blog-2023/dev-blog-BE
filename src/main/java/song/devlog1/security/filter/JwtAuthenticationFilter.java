@@ -13,10 +13,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
 import song.devlog1.exception.JwtProcessException;
+import song.devlog1.security.userdetails.UserDetailsImpl;
+import song.devlog1.security.userdetails.UserDetailsServiceImplInterface;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ import static song.devlog1.security.authentication.jwt.JwtKey.*;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImplInterface userDetailsService;
     private final AuthenticationEntryPoint authenticationHandler;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -58,12 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .build()
                 .parseClaimsJws(token);
 
-        String username = parsedToken
+        Long id = Long.valueOf(parsedToken
                 .getBody()
-                .getSubject();
+                .getSubject());
 
-        if (username != null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (id != null) {
+            UserDetails userDetails = userDetailsService.loadUserById(id);
             return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         }
 

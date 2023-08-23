@@ -171,7 +171,8 @@ public class UserService {
     }
 
     public void updateSecurityContext(User user) {
-        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+        UserDetailsImpl userDetails = new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(), user.getName(), user.getEmail(),
+                user.getRoleList(), user.isAccountNonExpired(), user.isAccountNonLocked(), user.isCredentialsNonExpired(), user.isEnabled());;
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

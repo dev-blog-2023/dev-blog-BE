@@ -23,6 +23,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public UserDto getUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("id = {}", userDetails.getId());
         User findUser = userService.findUser(userDetails.getId());
 
         UserDto userDto = new UserDto(findUser);

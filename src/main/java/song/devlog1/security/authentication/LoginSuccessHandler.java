@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import song.devlog1.security.authentication.jwt.JwtUtils;
 import song.devlog1.security.userdetails.UserDetailsImpl;
-import song.devlog1.security.userdetails.UserDetailsServiceImpl;
 
 import java.io.IOException;
 

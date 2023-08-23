@@ -58,11 +58,12 @@ public class BoardController {
     @GetMapping("/{id}")
     public BoardDto getBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
                              @PathVariable(value = "id") Long boardId) {
-
         BoardDto boardDto = null;
         if (userDetails != null) {
+            log.info("authentication");
             boardDto = boardService.findById(boardId, userDetails.getId());
         } else {
+            log.info("not authentication");
             boardDto = boardService.findById(boardId);
         }
 

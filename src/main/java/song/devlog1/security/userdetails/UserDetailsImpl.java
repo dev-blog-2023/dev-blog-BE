@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import song.devlog1.entity.Role;
 import song.devlog1.entity.User;
+import song.devlog1.entity.UserRole;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,18 +26,19 @@ public class UserDetailsImpl implements UserDetails {
     private boolean isCredentialsNonExpired;
     private boolean isEnabled;
 
-    public UserDetailsImpl(User user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.password = user.getPassword();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.roleList = user.getRoleList().stream().map(userRole -> new SimpleGrantedAuthority(userRole
+    public UserDetailsImpl(Long id, String username, String password, String name, String email, List<UserRole> roleList,
+                           boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.roleList = roleList.stream().map(userRole -> new SimpleGrantedAuthority(userRole
                 .getRole().getRoleName().name())).toList();
-        this.isAccountNonExpired = user.isAccountNonExpired();
-        this.isAccountNonLocked = user.isAccountNonLocked();
-        this.isCredentialsNonExpired = user.isCredentialsNonExpired();
-        this.isEnabled = user.isEnabled();
+        this.isAccountNonExpired = isAccountNonExpired;
+        this.isAccountNonLocked = isAccountNonLocked;
+        this.isCredentialsNonExpired = isCredentialsNonExpired;
+        this.isEnabled = isEnabled;
     }
 
     public Long getId() {
