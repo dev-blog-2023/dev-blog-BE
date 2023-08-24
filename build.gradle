@@ -64,8 +64,8 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//def reactAppDir = "$projectDir/src/main/webapp/reactapp"
-def reactAppDir = "$projectDir/src/main/webapp/dev1"
+def reactAppDir = "$projectDir/src/main/webapp/reactapp"
+//def reactAppDir = "$projectDir/src/main/webapp/dev1"
 
 sourceSets {
 	main {
