@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/", "/login", "logout", "/signup", "/css/**", "/*.ico", "/*.js", "/error").permitAll()
+                        .requestMatchers("/home", "/login", "logout", "/signup", "/css/**", "/*.ico", "/*.js", "/error").permitAll()
                         .requestMatchers(regexMatcher("^/api/board/[0-9]+$")).permitAll()
                         .requestMatchers("/api/board/**").authenticated()
                         .requestMatchers("/comment/**").authenticated()
