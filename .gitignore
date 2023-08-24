@@ -40,4 +40,4 @@ out/
 src/main/resources/*.yml
 !src/main/resources/application.yml
 src/main/resources/static
-src/main/webapp/dev1
+#src/main/webapp/dev1
